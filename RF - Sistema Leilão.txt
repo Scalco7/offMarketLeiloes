@@ -1,0 +1,22 @@
+Catalogo de imóveis de leilão
+
+Objetivo: Ajudar pessoas menos informadas e encontrar os melhores imóveis de leilão
+
+Descrição: O leilão de imóveis tem se tornado cada dia mais popular, mas as pessoas vão em massa nos lugares mais fáceis, como por exemplo o site da caixa. E tem boas oportunidades lá, mas se vc quer achar um diamante, vc tem q ir no lugar onde ninguém procura, nos lugares difíceis. O Objetivo desse sistema é automatizar a chegada a lugares difíceis e mostrar os imóveis encontrados nesses lugares, além d alertar os usuários cadastrados sobre as oportunidades.
+
+RF01 - O sistema deve buscar imóveis que estão indo a leilão no próximo mês dentro de sites de leiloeiros oficiais
+RF02 - O sistema deve formatar e armazenar os dados dos imóveis de leilão no seu banco de dados
+RF03 - O sistema deve após a inserção no banco de dados alertar os clientes cadastrados sobre a atualização do catálogo
+RF04 - O sistema deve após a inserção no banco de dados alertar os clientes cadastrados sobre os imóveis com maior desconto
+RF05 - O sistema deve permitir que um usuário visualize os imóveis de leilão catalogados
+RF06 - O sistema deve permitir que um usuário visualize o imóveis na página do leilão ao qual ele pertence
+RF07 - O sistema deve permitir que um usuário crie uma conta
+RF08 - O sistema deve permitir que um usuário entre na sua conta
+RF09 - O sistema deve permitir que um usuário saia da sua conta
+RF10 - O sistema deve permitir que um usuário coloque um imóvel nos seus favoritos
+RF11 - O sistema deve permitir que um usuário tire um imóvel dos seus favoritos
+RF12 - O sistema deve permitir que um usuário busque um imóvel pelo nome
+RF13 - O sistema deve permitir que um usuário busque um imóvel pela faixa de preço
+RF14 - O sistema deve permitir que um usuário busque um imóvel pelo estado
+RF15 - O sistema deve permitir que um usuário busque um imóvel pela cidade
+RF16 - O sistema deve permitir que um usuário selecione a ordenação dos imóveis (pelo preço)
