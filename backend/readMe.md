@@ -1,20 +1,22 @@
+# 📂 Estrutura do Projeto (CQRS Pattern)
+
+Este projeto utiliza o padrão **CQRS (Command Query Responsibility Segregation)** para separar as operações de escrita (Commands) das operações de leitura (Queries).
+
+## 🏗️ Organização de Pastas
+
+```text
 src/main/java/com/projeto/
-├── domain/
-│ ├── entities/ <-- Entidades JPA (@Entity) ricas em lógica
-│ └── repositories/ <-- Interfaces que estendem JpaRepository
+├── domain/                      # Camada de Domínio (Regras de Negócio)
+│   ├── entities/                # Entidades JPA (@Entity) ricas em lógica
+│   └── repositories/            # Interfaces de contrato (Estendem JpaRepository)
 │
-├── application/
-│ ├── features/
-│ │ └── products/
-│ │ ├── commands/ <-- Usa Spring Data JPA para salvar
-│ │ │ ├── CreateProductHandler.java
-│ │ │ └── CreateProductCommand.java
-│ │ └── queries/ <-- Pode usar JDBC ou Projeções DTO
-│ │ ├── GetProductHandler.java
-│ │ └── ProductDTO.java
+├── application/                 # Camada de Aplicação (Casos de Uso)
+│   ├── common/                  # Utilitários globais (Exceções, Paginação, Logs)
+│   └── features/                # Módulos de funcionalidade (Exemplo: Auth, Catalogo)
 │
-├── infrastructure/  
-│ └── persistence/ <-- Configurações de DB, Migrations (Flyway/Liquibase)
+├── infrastructure/              # Detalhes Técnicos e Externos
+│   └── security/                # Configurações do Spring Security
 │
-└── web/
-└── controllers/ <-- Exposição dos Endpoints
+└── web/                         # Porta de Entrada (Adapters)
+    └── controllers/             # Endpoints REST (Thin Controllers)
+```
