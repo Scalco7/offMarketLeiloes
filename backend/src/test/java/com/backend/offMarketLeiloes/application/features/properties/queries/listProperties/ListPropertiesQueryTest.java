@@ -15,6 +15,8 @@ import com.backend.offMarketLeiloes.application.common.dto.PaginatedResponse;
 import com.backend.offMarketLeiloes.application.features.properties.queries.listProperties.dto.ListPropertiesFilters;
 import com.backend.offMarketLeiloes.application.features.properties.queries.listProperties.viewModels.PropertyList;
 
+import java.util.UUID;
+
 @SpringBootTest
 @AutoConfigureTestDatabase
 @ActiveProfiles("test")
@@ -30,35 +32,96 @@ class ListPropertiesQueryTest {
     @BeforeEach
     void setUp() {
         jdbcTemplate.execute("DELETE FROM property");
-        jdbcTemplate.execute(
-                "INSERT INTO property (id, name, description, valued_price, current_price, created_at, updated_at) " +
-                        "VALUES (random_uuid(), 'Apartamento Luxo', 'Vista para o mar', 500000.0, 450000.0, now(), now())");
+        jdbcTemplate.execute("DELETE FROM property_address");
+
+        insertProperty("House A", 500000.0, 400000.0, "SP", "São Paulo");
+        insertProperty("House B", 300000.0, 250000.0, "RJ", "Rio de Janeiro");
+        insertProperty("Apartment C", 800000.0, 750000.0, "SP", "Campinas");
+        insertProperty("Apartment D", 1200000.0, 1100000.0, "MG", "Belo Horizonte");
+    }
+
+    private void insertProperty(String name, Double valuedPrice, Double currentPrice, String state, String city) {
+        UUID addressId = UUID.randomUUID();
+        jdbcTemplate.update(
+                "INSERT INTO property_address (id, state, city, zip_code, country, street, number, neighborhood, created_at, updated_at) "
+                        +
+                        "VALUES (?, ?, ?, '00000', 'Brazil', 'Street', '1', 'Bairro', now(), now())",
+                addressId, state, city);
+
+        jdbcTemplate.update(
+                "INSERT INTO property (id, name, description, valued_price, current_price, address_id, created_at, updated_at) "
+                        +
+                        "VALUES (random_uuid(), ?, 'Description', ?, ?, ?, now(), now())",
+                name, valuedPrice, currentPrice, addressId);
     }
 
     @Test
-    void shouldReturnPropertiesFromDatabase() {
-        // Act
-        PaginatedResponse<PropertyList> result = listPropertiesQuery.execute(new ListPropertiesFilters());
+    void shouldFilterByName() {
+        ListPropertiesFilters filters = new ListPropertiesFilters();
+        filters.setName("Apartment");
 
-        // Assert
+        PaginatedResponse<PropertyList> result = listPropertiesQuery.execute(filters);
+
+        assertEquals(2, result.getContent().size());
+        assertEquals(2, result.getTotalElements());
+    }
+
+    @Test
+    void shouldFilterByPriceRange() {
+        ListPropertiesFilters filters = new ListPropertiesFilters();
+        filters.setMinPrice(300000.0);
+        filters.setMaxPrice(800000.0);
+
+        PaginatedResponse<PropertyList> result = listPropertiesQuery.execute(filters);
+
+        // Houses at 400k and 750k fit here. 250k is too low, 1.1M is too high.
+        assertEquals(2, result.getContent().size());
+    }
+
+    @Test
+    void shouldFilterByState() {
+        ListPropertiesFilters filters = new ListPropertiesFilters();
+        filters.setState("SP");
+
+        PaginatedResponse<PropertyList> result = listPropertiesQuery.execute(filters);
+
+        assertEquals(2, result.getContent().size());
+    }
+
+    @Test
+    void shouldFilterByCity() {
+        ListPropertiesFilters filters = new ListPropertiesFilters();
+        filters.setCity("Rio");
+
+        PaginatedResponse<PropertyList> result = listPropertiesQuery.execute(filters);
+
         assertEquals(1, result.getContent().size());
-        PropertyList property = result.getContent().get(0);
-        assertEquals("Apartamento Luxo", property.getName());
-        assertEquals(500000.0, property.getValuedPrice());
-        assertEquals(450000.0, property.getCurrentPrice());
-        assertEquals(1, result.getTotalElements());
+        assertEquals("House B", result.getContent().get(0).getName());
     }
 
     @Test
-    void shouldReturnEmptyListWhenNoPropertiesExist() {
-        // Arrange
-        jdbcTemplate.execute("DELETE FROM property");
+    void shouldReturnSecondPage() {
+        ListPropertiesFilters filters = new ListPropertiesFilters();
+        filters.setPage(1);
+        filters.setPageSize(2);
 
-        // Act
-        PaginatedResponse<PropertyList> result = listPropertiesQuery.execute(new ListPropertiesFilters());
+        PaginatedResponse<PropertyList> result = listPropertiesQuery.execute(filters);
 
-        // Assert
-        assertEquals(0, result.getContent().size());
-        assertEquals(0, result.getTotalElements());
+        assertEquals(2, result.getContent().size());
+        assertEquals(4, result.getTotalElements());
+        assertEquals(2, result.getTotalPages());
+        assertEquals(1, result.getPage());
+    }
+
+    @Test
+    void shouldCombineFilters() {
+        ListPropertiesFilters filters = new ListPropertiesFilters();
+        filters.setState("SP");
+        filters.setMinPrice(500000.0);
+
+        PaginatedResponse<PropertyList> result = listPropertiesQuery.execute(filters);
+
+        assertEquals(1, result.getContent().size());
+        assertEquals("Apartment C", result.getContent().get(0).getName());
     }
 }

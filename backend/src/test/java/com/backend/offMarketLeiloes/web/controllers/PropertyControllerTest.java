@@ -1,50 +1,96 @@
 package com.backend.offMarketLeiloes.web.controllers;
 
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import java.util.List;
 import java.util.UUID;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
-import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
-import org.springframework.context.annotation.Import;
-import org.springframework.test.context.bean.override.mockito.MockitoBean;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.transaction.annotation.Transactional;
 
-import com.backend.offMarketLeiloes.application.common.dto.PaginatedResponse;
-import com.backend.offMarketLeiloes.application.features.properties.queries.listProperties.ListPropertiesQuery;
-import com.backend.offMarketLeiloes.application.features.properties.queries.listProperties.dto.ListPropertiesFilters;
-import com.backend.offMarketLeiloes.application.features.properties.queries.listProperties.viewModels.PropertyList;
-import com.backend.offMarketLeiloes.infrastructure.security.SecurityConfiguration;
-
-@WebMvcTest(PropertyController.class)
-@Import(SecurityConfiguration.class)
-@AutoConfigureMockMvc(addFilters = false) // Disabling security for this specific controller test
+@SpringBootTest
+@AutoConfigureMockMvc(addFilters = false)
+@ActiveProfiles("test")
+@Transactional
 class PropertyControllerTest {
 
-    @Autowired
-    private MockMvc mockMvc;
+        @Autowired
+        private MockMvc mockMvc;
 
-    @MockitoBean
-    private ListPropertiesQuery listPropertiesQuery;
+        @Autowired
+        private JdbcTemplate jdbcTemplate;
 
-    @Test
-    void shouldReturnPropertyList() throws Exception {
-        PropertyList property = new PropertyList(UUID.randomUUID(), "Edifício Horizonte", "Excelente localização",
-                2000000.0, 1500000.0);
-        when(listPropertiesQuery.execute(any(ListPropertiesFilters.class)))
-                .thenReturn(new PaginatedResponse<>(List.of(property), 0, 10, 1, 1));
+        @BeforeEach
+        void setUp() {
+                jdbcTemplate.execute("DELETE FROM property");
+                jdbcTemplate.execute("DELETE FROM property_address");
 
-        mockMvc.perform(get("/properties"))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.content[0].name").value("Edifício Horizonte"))
-                .andExpect(jsonPath("$.content[0].currentPrice").value(1500000.0))
-                .andExpect(jsonPath("$.totalElements").value(1));
-    }
+                insertProperty("Luxury Mansion", 5000000.0, 4000000.0, "SP", "São Paulo");
+                insertProperty("Beach House", 1000000.0, 900000.0, "RJ", "Angra");
+        }
+
+        private void insertProperty(String name, Double valuedPrice, Double currentPrice, String state, String city) {
+                UUID addressId = UUID.randomUUID();
+                jdbcTemplate.update(
+                                "INSERT INTO property_address (id, state, city, zip_code, country, street, number, neighborhood, created_at, updated_at) "
+                                                +
+                                                "VALUES (?, ?, ?, '00000', 'Brazil', 'Street', '1', 'Neighborhood', now(), now())",
+                                addressId, state, city);
+
+                jdbcTemplate.update(
+                                "INSERT INTO property (id, name, description, valued_price, current_price, address_id, created_at, updated_at) "
+                                                +
+                                                "VALUES (random_uuid(), ?, 'Description', ?, ?, ?, now(), now())",
+                                name, valuedPrice, currentPrice, addressId);
+        }
+
+        @Test
+        void shouldReturnRealDataFromH2() throws Exception {
+                mockMvc.perform(get("/properties"))
+                                .andExpect(status().isOk())
+                                .andExpect(jsonPath("$.content").isArray())
+                                .andExpect(jsonPath("$.totalElements").value(2));
+        }
+
+        @Test
+        void shouldFailWhenPageIsNegative() throws Exception {
+                mockMvc.perform(get("/properties")
+                                .param("page", "-1"))
+                                .andExpect(status().isBadRequest())
+                                .andExpect(jsonPath("$.page").value("A página deve ser maior ou igual a 0"));
+        }
+
+        @Test
+        void shouldFailWhenPriceIsNegative() throws Exception {
+                mockMvc.perform(get("/properties")
+                                .param("minPrice", "-100"))
+                                .andExpect(status().isBadRequest())
+                                .andExpect(jsonPath("$.minPrice").value("O preço mínimo não pode ser negativo"));
+        }
+
+        @Test
+        void shouldFilterByCityAndReturnCorrectElements() throws Exception {
+                mockMvc.perform(get("/properties")
+                                .param("city", "Angra"))
+                                .andExpect(status().isOk())
+                                .andExpect(jsonPath("$.content[0].name").value("Beach House"))
+                                .andExpect(jsonPath("$.totalElements").value(1));
+        }
+
+        @Test
+        void shouldReturnEmptyPageForNonExistentFilter() throws Exception {
+                mockMvc.perform(get("/properties")
+                                .param("state", "MG"))
+                                .andExpect(status().isOk())
+                                .andExpect(jsonPath("$.content").isEmpty())
+                                .andExpect(jsonPath("$.totalElements").value(0));
+        }
 }
