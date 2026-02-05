@@ -8,6 +8,7 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Service;
 
+import com.backend.offMarketLeiloes.application.common.dto.PaginatedResponse;
 import com.backend.offMarketLeiloes.application.features.properties.queries.listProperties.dto.ListPropertiesFilters;
 import com.backend.offMarketLeiloes.application.features.properties.queries.listProperties.viewModels.PropertyList;
 
@@ -17,39 +18,54 @@ public class ListPropertiesQuery {
     @Autowired
     private NamedParameterJdbcTemplate jdbcTemplate;
 
-    public List<PropertyList> execute(ListPropertiesFilters filters) {
-        StringBuilder sql = new StringBuilder(
-                "SELECT p.id, p.name, p.description, p.valued_price as valuedPrice, p.current_price as currentPrice " +
-                        "FROM property p " +
-                        "LEFT JOIN property_address pa ON p.address_id = pa.id WHERE 1=1");
-
+    public PaginatedResponse<PropertyList> execute(ListPropertiesFilters filters) {
+        StringBuilder filterSql = new StringBuilder(" WHERE 1=1");
         MapSqlParameterSource params = new MapSqlParameterSource();
 
         if (filters.getName() != null && !filters.getName().isBlank()) {
-            sql.append(" AND p.name ILIKE :name");
+            filterSql.append(" AND p.name ILIKE :name");
             params.addValue("name", "%" + filters.getName() + "%");
         }
 
         if (filters.getMinPrice() != null) {
-            sql.append(" AND p.current_price >= :minPrice");
+            filterSql.append(" AND p.current_price >= :minPrice");
             params.addValue("minPrice", filters.getMinPrice());
         }
 
         if (filters.getMaxPrice() != null) {
-            sql.append(" AND p.current_price <= :maxPrice");
+            filterSql.append(" AND p.current_price <= :maxPrice");
             params.addValue("maxPrice", filters.getMaxPrice());
         }
 
         if (filters.getState() != null && !filters.getState().isBlank()) {
-            sql.append(" AND pa.state = :state");
+            filterSql.append(" AND pa.state = :state");
             params.addValue("state", filters.getState());
         }
 
         if (filters.getCity() != null && !filters.getCity().isBlank()) {
-            sql.append(" AND pa.city ILIKE :city");
+            filterSql.append(" AND pa.city ILIKE :city");
             params.addValue("city", "%" + filters.getCity() + "%");
         }
 
-        return jdbcTemplate.query(sql.toString(), params, new BeanPropertyRowMapper<>(PropertyList.class));
+        String countSql = "SELECT COUNT(*) FROM property p LEFT JOIN property_address pa ON p.address_id = pa.id"
+                + filterSql;
+        long totalElements = jdbcTemplate.queryForObject(countSql, params, Long.class);
+
+        String dataSql = "SELECT p.id, p.name, p.description, p.valued_price as valuedPrice, p.current_price as currentPrice "
+                +
+                "FROM property p " +
+                "LEFT JOIN property_address pa ON p.address_id = pa.id" + filterSql +
+                " LIMIT :limit OFFSET :offset";
+
+        int limit = filters.getPageSize();
+        int offset = filters.getPage() * filters.getPageSize();
+        params.addValue("limit", limit);
+        params.addValue("offset", offset);
+
+        List<PropertyList> content = jdbcTemplate.query(dataSql, params,
+                new BeanPropertyRowMapper<>(PropertyList.class));
+        int totalPages = (int) Math.ceil((double) totalElements / limit);
+
+        return new PaginatedResponse<>(content, filters.getPage(), limit, totalElements, totalPages);
     }
 }

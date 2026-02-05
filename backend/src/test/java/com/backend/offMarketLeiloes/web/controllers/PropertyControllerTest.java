@@ -17,6 +17,7 @@ import org.springframework.context.annotation.Import;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
+import com.backend.offMarketLeiloes.application.common.dto.PaginatedResponse;
 import com.backend.offMarketLeiloes.application.features.properties.queries.listProperties.ListPropertiesQuery;
 import com.backend.offMarketLeiloes.application.features.properties.queries.listProperties.dto.ListPropertiesFilters;
 import com.backend.offMarketLeiloes.application.features.properties.queries.listProperties.viewModels.PropertyList;
@@ -37,11 +38,13 @@ class PropertyControllerTest {
     void shouldReturnPropertyList() throws Exception {
         PropertyList property = new PropertyList(UUID.randomUUID(), "Edifício Horizonte", "Excelente localização",
                 2000000.0, 1500000.0);
-        when(listPropertiesQuery.execute(any(ListPropertiesFilters.class))).thenReturn(List.of(property));
+        when(listPropertiesQuery.execute(any(ListPropertiesFilters.class)))
+                .thenReturn(new PaginatedResponse<>(List.of(property), 0, 10, 1, 1));
 
         mockMvc.perform(get("/properties"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$[0].name").value("Edifício Horizonte"))
-                .andExpect(jsonPath("$[0].currentPrice").value(1500000.0));
+                .andExpect(jsonPath("$.content[0].name").value("Edifício Horizonte"))
+                .andExpect(jsonPath("$.content[0].currentPrice").value(1500000.0))
+                .andExpect(jsonPath("$.totalElements").value(1));
     }
 }

@@ -1,5 +1,7 @@
 package com.backend.offMarketLeiloes.application.features.properties.queries.listProperties.dto;
 
+import com.backend.offMarketLeiloes.application.common.dto.PaginatedRequestParams;
+
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Getter;
 import lombok.Setter;
@@ -7,7 +9,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @Schema(description = "Filtros para busca de imóveis")
-public class ListPropertiesFilters {
+public class ListPropertiesFilters extends PaginatedRequestParams {
     @Schema(description = "Nome do imóvel", example = "Apartamento")
     private String name;
 
