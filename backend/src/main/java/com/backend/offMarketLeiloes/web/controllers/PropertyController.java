@@ -17,6 +17,8 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
+import jakarta.validation.Valid;
+
 @RestController
 @RequestMapping("/properties")
 @Tag(name = "Imóveis", description = "Rotas para gerenciamento e visualização de imóveis.")
@@ -27,11 +29,12 @@ public class PropertyController {
     @Operation(summary = "Lista todos os imóveis disponíveis", description = "Retorna uma lista de imóveis cadastrados no sistema com informações básicas, permitindo filtragem e paginação.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Lista de imóveis retornada com sucesso"),
+            @ApiResponse(responseCode = "400", description = "Parâmetros de busca inválidos"),
             @ApiResponse(responseCode = "500", description = "Erro interno no servidor")
     })
     @GetMapping
     public PaginatedResponse<PropertyList> listProperties(
-            @Parameter(description = "Filtros de busca e paginação") @ModelAttribute ListPropertiesFilters filters) {
+            @Parameter(description = "Filtros de busca e paginação") @Valid @ModelAttribute ListPropertiesFilters filters) {
         return listPropertiesQuery.execute(filters);
     }
 }
