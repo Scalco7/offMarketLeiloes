@@ -14,6 +14,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.backend.offMarketLeiloes.application.features.properties.queries.listProperties.dto.ListPropertiesFilters;
 import com.backend.offMarketLeiloes.application.features.properties.queries.listProperties.viewModels.PropertyList;
 
 @SpringBootTest
@@ -39,7 +40,7 @@ class ListPropertiesQueryTest {
     @Test
     void shouldReturnPropertiesFromDatabase() {
         // Act
-        List<PropertyList> result = listPropertiesQuery.execute();
+        List<PropertyList> result = listPropertiesQuery.execute(new ListPropertiesFilters());
 
         // Assert
         assertEquals(1, result.size());
@@ -55,7 +56,7 @@ class ListPropertiesQueryTest {
         jdbcTemplate.execute("DELETE FROM property");
 
         // Act
-        List<PropertyList> result = listPropertiesQuery.execute();
+        List<PropertyList> result = listPropertiesQuery.execute(new ListPropertiesFilters());
 
         // Assert
         assertFalse(result.isEmpty() == false);
