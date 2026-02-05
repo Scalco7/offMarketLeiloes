@@ -1,12 +1,12 @@
 package com.backend.offMarketLeiloes.domain.entities;
 
 import java.io.Serial;
+import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
-import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -15,9 +15,8 @@ import lombok.Setter;
 @Getter
 @Setter
 @Entity
-@EntityListeners(AuditingEntityListener.class)
-@Table(name = "property")
-public class Property {
+@Table(name = "property_address")
+public class PropertyAddress implements Serializable {
     @Serial
     private static final long serialVersionUID = 1L;
 
@@ -35,18 +34,29 @@ public class Property {
     private LocalDateTime updatedAt;
 
     @Column(nullable = false)
-    private String name;
+    private String zipCode;
 
     @Column(nullable = false)
-    private String description;
+    private String city;
 
     @Column(nullable = false)
-    private Double valuedPrice;
+    private String state;
 
     @Column(nullable = false)
-    private Double currentPrice;
+    private String country;
 
-    @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "address_id", referencedColumnName = "id")
-    private PropertyAddress address;
+    @Column(nullable = false)
+    private String street;
+
+    @Column(nullable = false)
+    private String number;
+
+    @Column(nullable = false)
+    private String neighborhood;
+
+    @Column
+    private String complement;
+
+    @OneToOne(mappedBy = "address")
+    private Property property;
 }
