@@ -1,7 +1,7 @@
 <template>
     <div>
         Página inicial
-        <v-btn>
+        <v-btn class="bg-primary">
             Test Button
         </v-btn>
     </div>
