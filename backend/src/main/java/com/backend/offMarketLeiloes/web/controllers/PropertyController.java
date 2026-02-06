@@ -13,6 +13,8 @@ import com.backend.offMarketLeiloes.application.features.properties.queries.list
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -21,20 +23,21 @@ import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("/properties")
-@Tag(name = "Imóveis", description = "Rotas para gerenciamento e visualização de imóveis.")
+@Tag(name = "Imóveis", description = "Endpoints para visualização e busca de propriedades (Imóveis).")
 public class PropertyController {
+
     @Autowired
     private ListPropertiesQuery listPropertiesQuery;
 
-    @Operation(summary = "Lista todos os imóveis disponíveis", description = "Retorna uma lista de imóveis cadastrados no sistema com informações básicas, permitindo filtragem e paginação.")
+    @Operation(summary = "Consulta de imóveis com filtros", description = "Retorna uma página de imóveis baseada nos filtros fornecidos. Esta rota é pública.")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Lista de imóveis retornada com sucesso"),
-            @ApiResponse(responseCode = "400", description = "Parâmetros de busca inválidos"),
+            @ApiResponse(responseCode = "200", description = "Pesquisa realizada com sucesso", content = @Content(schema = @Schema(implementation = PaginatedResponse.class))),
+            @ApiResponse(responseCode = "400", description = "Parâmetros de busca ou paginação inválidos"),
             @ApiResponse(responseCode = "500", description = "Erro interno no servidor")
     })
     @GetMapping
     public PaginatedResponse<PropertyList> listProperties(
-            @Parameter(description = "Filtros de busca e paginação") @Valid @ModelAttribute ListPropertiesFilters filters) {
+            @Parameter(description = "Filtros de busca (ID, nome, cidade, etc.) e parâmetros de paginação (page, size)") @Valid @ModelAttribute ListPropertiesFilters filters) {
         return listPropertiesQuery.execute(filters);
     }
 }
