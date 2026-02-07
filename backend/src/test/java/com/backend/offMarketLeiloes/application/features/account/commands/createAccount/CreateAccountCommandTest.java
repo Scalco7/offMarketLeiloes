@@ -39,7 +39,7 @@ class CreateAccountCommandTest {
     @Test
     void shouldCreateAccountAndReturnTokens() {
         CreateAccountRequest request = new CreateAccountRequest();
-        request.setName("New User");
+        request.setName("New Account");
         request.setEmail("new@example.com");
         request.setPassword("password123");
 
@@ -55,7 +55,7 @@ class CreateAccountCommandTest {
     @Test
     void shouldThrowExceptionWhenEmailAlreadyExists() {
         CreateAccountRequest request = new CreateAccountRequest();
-        request.setName("User 1");
+        request.setName("Account 1");
         request.setEmail("duplicate@example.com");
         request.setPassword("password123");
 

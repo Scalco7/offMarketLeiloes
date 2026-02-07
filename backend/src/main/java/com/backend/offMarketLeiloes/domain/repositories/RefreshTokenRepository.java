@@ -10,7 +10,7 @@ import com.backend.offMarketLeiloes.domain.entities.RefreshToken;
 public interface RefreshTokenRepository extends JpaRepository<RefreshToken, UUID> {
     Optional<RefreshToken> findByToken(String token);
 
-    Optional<RefreshToken> findByTokenAndUserId(String token, UUID userId);
+    Optional<RefreshToken> findByTokenAndAccountId(String token, UUID accountId);
 
-    void deleteByUserEmail(String email);
+    void deleteByAccountEmail(String email);
 }

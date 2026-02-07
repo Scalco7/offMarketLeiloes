@@ -34,7 +34,7 @@ class RefreshTokenCommandTest {
     @Autowired
     private RefreshTokenRepository refreshTokenRepository;
 
-    private Account testUser;
+    private Account testAccount;
     private String validRefreshToken;
 
     @BeforeEach
@@ -42,16 +42,16 @@ class RefreshTokenCommandTest {
         refreshTokenRepository.deleteAll();
         accountRepository.deleteAll();
 
-        testUser = new Account();
-        testUser.setName("Refresh User");
-        testUser.setEmail("refresh@example.com");
-        testUser.setPassword("password");
-        testUser = accountRepository.saveAndFlush(testUser);
+        testAccount = new Account();
+        testAccount.setName("Refresh Account");
+        testAccount.setEmail("refresh@example.com");
+        testAccount.setPassword("password");
+        testAccount = accountRepository.saveAndFlush(testAccount);
 
         validRefreshToken = UUID.randomUUID().toString();
         RefreshToken refreshToken = new RefreshToken();
         refreshToken.setToken(validRefreshToken);
-        refreshToken.setUser(testUser);
+        refreshToken.setAccount(testAccount);
         refreshToken.setExpiresAt(LocalDateTime.now().plusDays(1));
         refreshTokenRepository.saveAndFlush(refreshToken);
     }
@@ -60,7 +60,7 @@ class RefreshTokenCommandTest {
     void shouldRefreshTokenSuccessfully() {
         RefreshTokenRequest request = new RefreshTokenRequest();
         request.setRefreshToken(validRefreshToken);
-        request.setUserId(testUser.getId().toString());
+        request.setAccountId(testAccount.getId().toString());
 
         AuthenticationResponse response = refreshTokenCommand.execute(request);
 
@@ -73,7 +73,7 @@ class RefreshTokenCommandTest {
     void shouldFailWithInvalidToken() {
         RefreshTokenRequest request = new RefreshTokenRequest();
         request.setRefreshToken(UUID.randomUUID().toString());
-        request.setUserId(testUser.getId().toString());
+        request.setAccountId(testAccount.getId().toString());
 
         assertThrows(RuntimeException.class, () -> refreshTokenCommand.execute(request));
     }
@@ -83,13 +83,13 @@ class RefreshTokenCommandTest {
         String expiredToken = UUID.randomUUID().toString();
         RefreshToken refreshToken = new RefreshToken();
         refreshToken.setToken(expiredToken);
-        refreshToken.setUser(testUser);
+        refreshToken.setAccount(testAccount);
         refreshToken.setExpiresAt(LocalDateTime.now().minusDays(1));
         refreshTokenRepository.saveAndFlush(refreshToken);
 
         RefreshTokenRequest request = new RefreshTokenRequest();
         request.setRefreshToken(expiredToken);
-        request.setUserId(testUser.getId().toString());
+        request.setAccountId(testAccount.getId().toString());
 
         assertThrows(RuntimeException.class, () -> refreshTokenCommand.execute(request));
     }

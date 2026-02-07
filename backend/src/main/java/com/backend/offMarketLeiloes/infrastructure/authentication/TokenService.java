@@ -29,13 +29,13 @@ public class TokenService {
 
     private final RefreshTokenRepository refreshTokenRepository;
 
-    public String generateToken(Account user) {
+    public String generateToken(Account account) {
         try {
             Algorithm algorithm = Algorithm.HMAC256(secret);
             return JWT.create()
                     .withIssuer("offMarketLeiloes")
-                    .withSubject(user.getEmail())
-                    .withClaim("userId", user.getId().toString())
+                    .withSubject(account.getEmail())
+                    .withClaim("accountId", account.getId().toString())
                     .withExpiresAt(genExpirationDate(2)) // 2 hours
                     .sign(algorithm);
         } catch (JWTCreationException exception) {
@@ -57,12 +57,12 @@ public class TokenService {
     }
 
     @Transactional
-    public String createRefreshToken(Account user) {
+    public String createRefreshToken(Account account) {
         String token = UUID.randomUUID().toString();
 
         RefreshToken refreshToken = new RefreshToken();
         refreshToken.setToken(token);
-        refreshToken.setUser(user);
+        refreshToken.setAccount(account);
         refreshToken.setExpiresAt(
                 LocalDateTime.ofInstant(genRefreshTokenExpirationDate(), ZoneOffset.of("-03:00")));
 
@@ -72,9 +72,9 @@ public class TokenService {
     }
 
     @Transactional
-    public AuthenticationResponse generateAuthenticationResponse(Account user) {
-        String accessToken = generateToken(user);
-        String refreshToken = createRefreshToken(user);
+    public AuthenticationResponse generateAuthenticationResponse(Account account) {
+        String accessToken = generateToken(account);
+        String refreshToken = createRefreshToken(account);
 
         return new AuthenticationResponse(accessToken, refreshToken);
     }

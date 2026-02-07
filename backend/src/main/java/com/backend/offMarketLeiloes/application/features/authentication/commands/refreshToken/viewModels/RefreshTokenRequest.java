@@ -11,6 +11,6 @@ public class RefreshTokenRequest {
     @Schema(description = "Refresh token válido recebido no login", example = "8f4e2d31-ce83-4903-a12c-da0f4439c288")
     private String refreshToken;
 
-    @Schema(description = "ID único do usuário", example = "550e8400-e29b-41d4-a716-446655440000")
-    private String userId;
+    @Schema(description = "ID único da conta", example = "550e8400-e29b-41d4-a716-446655440000")
+    private String accountId;
 }

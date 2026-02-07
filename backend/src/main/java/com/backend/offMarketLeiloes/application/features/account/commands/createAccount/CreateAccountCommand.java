@@ -16,23 +16,23 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class CreateAccountCommand {
 
-    private final AccountRepository userRepository;
+    private final AccountRepository accountRepository;
     private final TokenService tokenService;
     private final PasswordHashService passwordHashService;
 
     @Transactional
     public AuthenticationResponse execute(CreateAccountRequest request) {
-        if (userRepository.findByEmail(request.getEmail()).isPresent()) {
-            throw new RuntimeException("Usuário já cadastrado com este email");
+        if (accountRepository.findByEmail(request.getEmail()).isPresent()) {
+            throw new RuntimeException("Conta já cadastrada com este email");
         }
 
-        Account user = new Account();
-        user.setName(request.getName());
-        user.setEmail(request.getEmail());
-        user.setPassword(passwordHashService.gerarHashSenha(request.getPassword()));
+        Account account = new Account();
+        account.setName(request.getName());
+        account.setEmail(request.getEmail());
+        account.setPassword(passwordHashService.generateHashPassword(request.getPassword()));
 
-        userRepository.save(user);
+        accountRepository.save(account);
 
-        return tokenService.generateAuthenticationResponse(user);
+        return tokenService.generateAuthenticationResponse(account);
     }
 }

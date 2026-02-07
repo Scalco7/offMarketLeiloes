@@ -16,19 +16,19 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class LoginCommand {
 
-    private final AccountRepository userRepository;
+    private final AccountRepository accountRepository;
     private final TokenService tokenService;
     private final PasswordHashService passwordHashService;
 
     @Transactional
     public AuthenticationResponse execute(LoginRequest request) {
-        Account user = userRepository.findByEmail(request.getEmail())
-                .orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
+        Account account = accountRepository.findByEmail(request.getEmail())
+                .orElseThrow(() -> new RuntimeException("Conta não encontrada"));
 
-        if (!passwordHashService.verificarSenha(request.getPassword(), user.getPassword())) {
+        if (!passwordHashService.verifyPassword(request.getPassword(), account.getPassword())) {
             throw new RuntimeException("Senha inválida");
         }
 
-        return tokenService.generateAuthenticationResponse(user);
+        return tokenService.generateAuthenticationResponse(account);
     }
 }

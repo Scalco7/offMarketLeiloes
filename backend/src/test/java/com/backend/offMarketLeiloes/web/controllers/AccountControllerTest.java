@@ -45,7 +45,7 @@ class AccountControllerTest {
     @Test
     void shouldCreateAccountViaApi() throws Exception {
         CreateAccountRequest request = new CreateAccountRequest();
-        request.setName("API User");
+        request.setName("API Account");
         request.setEmail("api@example.com");
         request.setPassword("password123");
 
@@ -60,7 +60,7 @@ class AccountControllerTest {
     @Test
     void shouldFailWhenEmailIsInvalid() throws Exception {
         CreateAccountRequest request = new CreateAccountRequest();
-        request.setName("API User");
+        request.setName("API Account");
         request.setEmail("invalid-email");
         request.setPassword("password123");
 

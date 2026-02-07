@@ -47,7 +47,7 @@ class AuthenticationControllerTest {
 
     private final ObjectMapper objectMapper = new ObjectMapper().registerModule(new JavaTimeModule());
 
-    private Account testUser;
+    private Account testAccount;
     private String validRefreshToken;
 
     @BeforeEach
@@ -55,16 +55,16 @@ class AuthenticationControllerTest {
         refreshTokenRepository.deleteAll();
         accountRepository.deleteAll();
 
-        testUser = new Account();
-        testUser.setName("Auth User");
-        testUser.setEmail("auth@example.com");
-        testUser.setPassword(passwordHashService.gerarHashSenha("password123"));
-        testUser = accountRepository.saveAndFlush(testUser);
+        testAccount = new Account();
+        testAccount.setName("Auth Account");
+        testAccount.setEmail("auth@example.com");
+        testAccount.setPassword(passwordHashService.generateHashPassword("password123"));
+        testAccount = accountRepository.saveAndFlush(testAccount);
 
         validRefreshToken = UUID.randomUUID().toString();
         RefreshToken refreshToken = new RefreshToken();
         refreshToken.setToken(validRefreshToken);
-        refreshToken.setUser(testUser);
+        refreshToken.setAccount(testAccount);
         refreshToken.setExpiresAt(LocalDateTime.now().plusDays(1));
         refreshTokenRepository.saveAndFlush(refreshToken);
     }
@@ -87,7 +87,7 @@ class AuthenticationControllerTest {
     void shouldRefreshViaApi() throws Exception {
         RefreshTokenRequest request = new RefreshTokenRequest();
         request.setRefreshToken(validRefreshToken);
-        request.setUserId(testUser.getId().toString());
+        request.setAccountId(testAccount.getId().toString());
 
         mockMvc.perform(post("/auth/refresh")
                 .contentType(MediaType.APPLICATION_JSON)

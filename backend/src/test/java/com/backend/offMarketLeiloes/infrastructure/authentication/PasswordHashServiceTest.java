@@ -18,7 +18,7 @@ class PasswordHashServiceTest {
     @Test
     void shouldGenerateHash() {
         String password = "password123";
-        String hash = passwordHashService.gerarHashSenha(password);
+        String hash = passwordHashService.generateHashPassword(password);
 
         assertNotNull(hash);
         assertTrue(hash.startsWith("$2a$") || hash.startsWith("$2b$")); // BCrypt format
@@ -27,9 +27,9 @@ class PasswordHashServiceTest {
     @Test
     void shouldVerifyPassword() {
         String password = "password123";
-        String hash = passwordHashService.gerarHashSenha(password);
+        String hash = passwordHashService.generateHashPassword(password);
 
-        boolean matches = passwordHashService.verificarSenha(password, hash);
+        boolean matches = passwordHashService.verifyPassword(password, hash);
 
         assertTrue(matches);
     }

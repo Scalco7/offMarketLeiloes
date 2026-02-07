@@ -25,18 +25,18 @@ public class RefreshTokenCommand {
     @Transactional
     public AuthenticationResponse execute(RefreshTokenRequest request) {
         RefreshToken refreshToken = refreshTokenRepository
-                .findByTokenAndUserId(request.getRefreshToken(), UUID.fromString(request.getUserId()))
-                .orElseThrow(() -> new RuntimeException("Refresh Token inválido para este usuário"));
+                .findByTokenAndAccountId(request.getRefreshToken(), UUID.fromString(request.getAccountId()))
+                .orElseThrow(() -> new RuntimeException("Refresh Token inválido para esta conta"));
 
         if (refreshToken.getExpiresAt().isBefore(LocalDateTime.now())) {
             refreshTokenRepository.delete(refreshToken);
             throw new RuntimeException("Refresh Token expirado");
         }
 
-        Account user = refreshToken.getUser();
+        Account account = refreshToken.getAccount();
 
         refreshTokenRepository.delete(refreshToken);
 
-        return tokenService.generateAuthenticationResponse(user);
+        return tokenService.generateAuthenticationResponse(account);
     }
 }

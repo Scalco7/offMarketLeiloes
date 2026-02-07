@@ -11,11 +11,11 @@ public class PasswordHashService {
 
     private final PasswordEncoder passwordEncoder;
 
-    public String gerarHashSenha(String password) {
+    public String generateHashPassword(String password) {
         return passwordEncoder.encode(password);
     }
 
-    public boolean verificarSenha(String password, String hash) {
+    public boolean verifyPassword(String password, String hash) {
         return passwordEncoder.matches(password, hash);
     }
 }

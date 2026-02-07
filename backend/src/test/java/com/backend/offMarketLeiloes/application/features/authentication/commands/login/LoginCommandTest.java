@@ -39,11 +39,11 @@ class LoginCommandTest {
         refreshTokenRepository.deleteAll();
         accountRepository.deleteAll();
 
-        Account user = new Account();
-        user.setName("Login User");
-        user.setEmail("login@example.com");
-        user.setPassword(passwordHashService.gerarHashSenha("correct_password"));
-        accountRepository.save(user);
+        Account account = new Account();
+        account.setName("Login Account");
+        account.setEmail("login@example.com");
+        account.setPassword(passwordHashService.generateHashPassword("correct_password"));
+        accountRepository.save(account);
     }
 
     @Test
@@ -69,7 +69,7 @@ class LoginCommandTest {
     }
 
     @Test
-    void shouldFailWithNonExistentUser() {
+    void shouldFailWithNonExistentAccount() {
         LoginRequest request = new LoginRequest();
         request.setEmail("nonexistent@example.com");
         request.setPassword("password");

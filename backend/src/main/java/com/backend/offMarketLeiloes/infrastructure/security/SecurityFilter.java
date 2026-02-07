@@ -22,7 +22,7 @@ import lombok.RequiredArgsConstructor;
 public class SecurityFilter extends OncePerRequestFilter {
 
     private final TokenService tokenService;
-    private final AccountRepository userRepository;
+    private final AccountRepository accountRepository;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
@@ -31,12 +31,12 @@ public class SecurityFilter extends OncePerRequestFilter {
         if (token != null) {
             var subject = tokenService.validateToken(token);
             if (!subject.isEmpty()) {
-                var user = userRepository.findByEmail(subject)
-                        .orElseThrow(() -> new UsernameNotFoundException("Usuário não encontrado"));
+                var account = accountRepository.findByEmail(subject)
+                        .orElseThrow(() -> new UsernameNotFoundException("Conta não encontrada"));
 
-                // We need a UserDetails implementation or a simple way to create one.
+                // We need an AccountDetails implementation or a simple way to create one.
                 // For now, let's just use the email as the authority.
-                var authentication = new UsernamePasswordAuthenticationToken(user, null, null);
+                var authentication = new UsernamePasswordAuthenticationToken(account, null, null);
                 SecurityContextHolder.getContext().setAuthentication(authentication);
             }
         }

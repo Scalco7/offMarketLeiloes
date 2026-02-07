@@ -31,37 +31,37 @@ class TokenServiceTest {
     @Autowired
     private RefreshTokenRepository refreshTokenRepository;
 
-    private Account testUser;
+    private Account testAccount;
 
     @BeforeEach
     void setUp() {
         refreshTokenRepository.deleteAll();
         accountRepository.deleteAll();
 
-        testUser = new Account();
-        testUser.setName("Test User");
-        testUser.setEmail("test@example.com");
-        testUser.setPassword("password");
-        testUser = accountRepository.saveAndFlush(testUser);
+        testAccount = new Account();
+        testAccount.setName("Test Account");
+        testAccount.setEmail("test@example.com");
+        testAccount.setPassword("password");
+        testAccount = accountRepository.saveAndFlush(testAccount);
     }
 
     @Test
     void shouldGenerateAccessToken() {
-        String token = tokenService.generateToken(testUser);
+        String token = tokenService.generateToken(testAccount);
         assertNotNull(token);
         assertFalse(token.isEmpty());
     }
 
     @Test
     void shouldValidateToken() {
-        String token = tokenService.generateToken(testUser);
+        String token = tokenService.generateToken(testAccount);
         String subject = tokenService.validateToken(token);
-        assertEquals(testUser.getEmail(), subject);
+        assertEquals(testAccount.getEmail(), subject);
     }
 
     @Test
     void shouldCreateRefreshToken() {
-        String refreshToken = tokenService.createRefreshToken(testUser);
+        String refreshToken = tokenService.createRefreshToken(testAccount);
         assertNotNull(refreshToken);
 
         assertTrue(refreshTokenRepository.findByToken(refreshToken).isPresent());
@@ -69,13 +69,13 @@ class TokenServiceTest {
 
     @Test
     void shouldGenerateAuthenticationResponse() {
-        AuthenticationResponse response = tokenService.generateAuthenticationResponse(testUser);
+        AuthenticationResponse response = tokenService.generateAuthenticationResponse(testAccount);
 
         assertNotNull(response.getAccessToken());
         assertNotNull(response.getRefreshToken());
 
         String subject = tokenService.validateToken(response.getAccessToken());
-        assertEquals(testUser.getEmail(), subject);
+        assertEquals(testAccount.getEmail(), subject);
 
         assertTrue(refreshTokenRepository.findByToken(response.getRefreshToken()).isPresent());
     }
