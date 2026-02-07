@@ -2,6 +2,8 @@ package com.backend.offMarketLeiloes.web.controllers;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -98,5 +100,21 @@ class FavoritePropertyControllerTest {
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isNoContent());
+    }
+
+    @Test
+    void shouldListFavoritesViaApi() throws Exception {
+        FavoriteProperty favorite = new FavoriteProperty();
+        favorite.setAccount(testAccount);
+        favorite.setProperty(testProperty);
+        favoritePropertyRepository.saveAndFlush(favorite);
+
+        mockMvc.perform(get("/favorites")
+                .param("name", "Test")
+                .param("page", "0")
+                .param("pageSize", "10")
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.content[0].name").value("Test Property"));
     }
 }
