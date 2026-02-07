@@ -2,6 +2,8 @@ package com.backend.offMarketLeiloes.domain.entities;
 
 import java.io.Serial;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 import org.springframework.data.annotation.CreatedDate;
@@ -49,4 +51,7 @@ public class Property {
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "address_id", referencedColumnName = "id")
     private PropertyAddress address;
+
+    @OneToMany(mappedBy = "property", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<FavoriteProperty> favoriteProperties = new ArrayList<>();
 }
