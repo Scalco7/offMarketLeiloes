@@ -1,4 +1,4 @@
-package com.backend.offMarketLeiloes.application.features.properties.queries.listProperties.dto;
+package com.backend.offMarketLeiloes.application.features.properties.queries.listProperties.viewModels;
 
 import com.backend.offMarketLeiloes.application.common.dto.PaginatedRequestParams;
 

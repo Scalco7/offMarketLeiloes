@@ -9,7 +9,7 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Service;
 
 import com.backend.offMarketLeiloes.application.common.dto.PaginatedResponse;
-import com.backend.offMarketLeiloes.application.features.properties.queries.listProperties.dto.ListPropertiesFilters;
+import com.backend.offMarketLeiloes.application.features.properties.queries.listProperties.viewModels.ListPropertiesFilters;
 import com.backend.offMarketLeiloes.application.features.properties.queries.listProperties.viewModels.PropertyList;
 
 @Service

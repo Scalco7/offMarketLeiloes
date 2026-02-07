@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.backend.offMarketLeiloes.application.common.dto.PaginatedResponse;
 import com.backend.offMarketLeiloes.application.features.properties.queries.listProperties.ListPropertiesQuery;
-import com.backend.offMarketLeiloes.application.features.properties.queries.listProperties.dto.ListPropertiesFilters;
+import com.backend.offMarketLeiloes.application.features.properties.queries.listProperties.viewModels.ListPropertiesFilters;
 import com.backend.offMarketLeiloes.application.features.properties.queries.listProperties.viewModels.PropertyList;
 
 import io.swagger.v3.oas.annotations.Operation;
