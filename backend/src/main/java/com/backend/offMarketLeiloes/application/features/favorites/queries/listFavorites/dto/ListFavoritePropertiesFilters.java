@@ -11,4 +11,7 @@ import lombok.Setter;
 public class ListFavoritePropertiesFilters extends PaginatedRequestParams {
     @Schema(description = "Busca pelo nome da propriedade", example = "Apartamento")
     private String name;
+
+    @Schema(description = "Ordenação por preço (asc para menor preço, desc para maior preço)", example = "asc")
+    private String sortByPrice;
 }

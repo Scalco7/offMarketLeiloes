@@ -124,4 +124,32 @@ class ListPropertiesQueryTest {
         assertEquals(1, result.getContent().size());
         assertEquals("Apartment C", result.getContent().get(0).getName());
     }
+
+    @Test
+    void shouldSortByPriceAscending() {
+        ListPropertiesFilters filters = new ListPropertiesFilters();
+        filters.setSortByPrice("asc");
+
+        PaginatedResponse<PropertyList> result = listPropertiesQuery.execute(filters);
+
+        assertEquals(4, result.getContent().size());
+        assertEquals("House B", result.getContent().get(0).getName()); // 250k
+        assertEquals("House A", result.getContent().get(1).getName()); // 400k
+        assertEquals("Apartment C", result.getContent().get(2).getName()); // 750k
+        assertEquals("Apartment D", result.getContent().get(3).getName()); // 1.1M
+    }
+
+    @Test
+    void shouldSortByPriceDescending() {
+        ListPropertiesFilters filters = new ListPropertiesFilters();
+        filters.setSortByPrice("desc");
+
+        PaginatedResponse<PropertyList> result = listPropertiesQuery.execute(filters);
+
+        assertEquals(4, result.getContent().size());
+        assertEquals("Apartment D", result.getContent().get(0).getName()); // 1.1M
+        assertEquals("Apartment C", result.getContent().get(1).getName()); // 750k
+        assertEquals("House A", result.getContent().get(2).getName()); // 400k
+        assertEquals("House B", result.getContent().get(3).getName()); // 250k
+    }
 }

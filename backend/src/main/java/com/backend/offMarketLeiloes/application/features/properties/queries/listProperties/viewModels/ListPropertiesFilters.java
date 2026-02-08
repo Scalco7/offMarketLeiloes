@@ -27,4 +27,7 @@ public class ListPropertiesFilters extends PaginatedRequestParams {
 
     @Schema(description = "Cidade", example = "São Paulo")
     private String city;
+
+    @Schema(description = "Ordenação por preço (asc para menor preço, desc para maior preço)", example = "asc")
+    private String sortByPrice;
 }

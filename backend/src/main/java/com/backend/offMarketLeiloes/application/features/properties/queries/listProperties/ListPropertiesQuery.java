@@ -51,10 +51,20 @@ public class ListPropertiesQuery {
                 + filterSql;
         long totalElements = jdbcTemplate.queryForObject(countSql, params, Long.class);
 
+        String orderBySql = "";
+        if (filters.getSortByPrice() != null && !filters.getSortByPrice().isBlank()) {
+            if (filters.getSortByPrice().equalsIgnoreCase("asc")) {
+                orderBySql = " ORDER BY p.current_price ASC";
+            } else if (filters.getSortByPrice().equalsIgnoreCase("desc")) {
+                orderBySql = " ORDER BY p.current_price DESC";
+            }
+        }
+
         String dataSql = "SELECT p.id, p.name, p.description, p.valued_price as valuedPrice, p.current_price as currentPrice "
                 +
                 "FROM property p " +
                 "LEFT JOIN property_address pa ON p.address_id = pa.id" + filterSql +
+                orderBySql +
                 " LIMIT :limit OFFSET :offset";
 
         int limit = filters.getPageSize();

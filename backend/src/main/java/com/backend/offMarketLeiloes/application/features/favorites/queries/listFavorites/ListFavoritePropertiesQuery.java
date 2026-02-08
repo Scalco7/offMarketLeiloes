@@ -36,11 +36,19 @@ public class ListFavoritePropertiesQuery {
 
         long totalElements = jdbcTemplate.queryForObject(countSql, params, Long.class);
 
-        String dataSql = "SELECT p.id, p.name, p.description, p.valued_price as valuedPrice, p.current_price as currentPrice "
+        String orderBySql = " ORDER BY fp.created_at DESC";
+        if (filters.getSortByPrice() != null && !filters.getSortByPrice().isBlank()) {
+            if (filters.getSortByPrice().equalsIgnoreCase("asc")) {
+                orderBySql = " ORDER BY p.current_price ASC";
+            } else if (filters.getSortByPrice().equalsIgnoreCase("desc")) {
+                orderBySql = " ORDER BY p.current_price DESC";
+            }
+        }
+
+        String dataSql = "SELECT p.id, p.name, p.description, p.valued_price as valuedPrice, p.current_price as currentPrice FROM favorite_property fp "
                 +
-                "FROM favorite_property fp " +
                 "INNER JOIN property p ON fp.property_id = p.id" + filterSql +
-                " ORDER BY fp.created_at DESC" +
+                orderBySql +
                 " LIMIT :limit OFFSET :offset";
 
         int limit = filters.getPageSize();

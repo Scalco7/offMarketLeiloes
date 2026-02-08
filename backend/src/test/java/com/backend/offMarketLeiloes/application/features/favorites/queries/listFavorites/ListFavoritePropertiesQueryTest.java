@@ -52,20 +52,20 @@ class ListFavoritePropertiesQueryTest {
         var authentication = new UsernamePasswordAuthenticationToken(testAccount, null, null);
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
-        UUID propA = insertProperty("House A");
-        insertProperty("House B");
-        UUID propC = insertProperty("Apartment C");
+        UUID propA = insertProperty("House A", 90000.0);
+        insertProperty("House B", 110000.0);
+        UUID propC = insertProperty("Apartment C", 80000.0);
 
         favoriteProperty(testAccount.getId(), propA);
         favoriteProperty(testAccount.getId(), propC);
     }
 
-    private UUID insertProperty(String name) {
+    private UUID insertProperty(String name, Double currentPrice) {
         UUID id = UUID.randomUUID();
         jdbcTemplate.update(
                 "INSERT INTO property (id, name, description, valued_price, current_price, created_at, updated_at) " +
-                        "VALUES (?, ?, 'Description', 100000.0, 90000.0, now(), now())",
-                id, name);
+                        "VALUES (?, ?, 'Description', 100000.0, ?, now(), now())",
+                id, name, currentPrice);
         return id;
     }
 
@@ -118,5 +118,29 @@ class ListFavoritePropertiesQueryTest {
         assertEquals(1, result.getContent().size());
         assertEquals(2, result.getTotalElements());
         assertEquals(2, result.getTotalPages());
+    }
+
+    @Test
+    void shouldSortFavoritesByPriceAscending() {
+        ListFavoritePropertiesFilters filters = new ListFavoritePropertiesFilters();
+        filters.setSortByPrice("asc");
+
+        PaginatedResponse<PropertyList> result = listFavoritePropertiesQuery.execute(filters);
+
+        assertEquals(2, result.getContent().size());
+        assertEquals("Apartment C", result.getContent().get(0).getName()); // 80k
+        assertEquals("House A", result.getContent().get(1).getName()); // 90k
+    }
+
+    @Test
+    void shouldSortFavoritesByPriceDescending() {
+        ListFavoritePropertiesFilters filters = new ListFavoritePropertiesFilters();
+        filters.setSortByPrice("desc");
+
+        PaginatedResponse<PropertyList> result = listFavoritePropertiesQuery.execute(filters);
+
+        assertEquals(2, result.getContent().size());
+        assertEquals("House A", result.getContent().get(0).getName()); // 90k
+        assertEquals("Apartment C", result.getContent().get(1).getName()); // 80k
     }
 }
