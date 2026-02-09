@@ -1,6 +1,10 @@
 package com.backend.offMarketLeiloes.application.features.properties.queries.listProperties.viewModels;
 
+import java.time.LocalDateTime;
 import java.util.UUID;
+
+import com.backend.offMarketLeiloes.domain.enums.EPropertyStatus;
+import com.backend.offMarketLeiloes.domain.enums.EPropertyType;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 
@@ -29,4 +33,38 @@ public class PropertyList {
 
     @Schema(description = "Preço atual de mercado ou lance inicial", example = "900000.00")
     private Double currentPrice;
+
+    @Schema(description = "Data e hora do leilão", example = "2024-12-31T10:00:00")
+    private LocalDateTime auctionDateTime;
+
+    @Schema(description = "Nome do leiloeiro", example = "Leilões Brasil")
+    private String auctioneerName;
+
+    @Schema(description = "Link para o site do leiloeiro", example = "https://leiloes.com/123")
+    private String auctionLink;
+
+    @Schema(description = "Link da imagem de capa do imóvel", example = "https://images.com/property.jpg")
+    private String imageLink;
+
+    @Schema(description = "Tipo do imóvel", example = "HOUSE")
+    private EPropertyType type;
+
+    @Schema(description = "Status do imóvel", example = "ACTIVE")
+    private EPropertyStatus status;
+
+    @Schema(description = "Endereço do imóvel")
+    private PropertyAddressList address;
+
+    @Getter
+    @Setter
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class PropertyAddressList {
+        private String zipCode;
+        private String city;
+        private String state;
+        private String street;
+        private String number;
+        private String neighborhood;
+    }
 }

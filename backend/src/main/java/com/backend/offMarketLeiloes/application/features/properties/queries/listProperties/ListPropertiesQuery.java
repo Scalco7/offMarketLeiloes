@@ -1,9 +1,9 @@
 package com.backend.offMarketLeiloes.application.features.properties.queries.listProperties;
 
 import java.util.List;
+import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Service;
@@ -11,6 +11,8 @@ import org.springframework.stereotype.Service;
 import com.backend.offMarketLeiloes.application.common.dto.PaginatedResponse;
 import com.backend.offMarketLeiloes.application.features.properties.queries.listProperties.viewModels.ListPropertiesFilters;
 import com.backend.offMarketLeiloes.application.features.properties.queries.listProperties.viewModels.PropertyList;
+import com.backend.offMarketLeiloes.domain.enums.EPropertyStatus;
+import com.backend.offMarketLeiloes.domain.enums.EPropertyType;
 
 @Service
 public class ListPropertiesQuery {
@@ -60,8 +62,12 @@ public class ListPropertiesQuery {
             }
         }
 
-        String dataSql = "SELECT p.id, p.name, p.description, p.valued_price as valuedPrice, p.current_price as currentPrice "
+        String dataSql = "SELECT p.id, p.name, p.description, p.valued_price as valuedPrice, p.current_price as currentPrice, "
                 +
+                "p.auction_date_time as auctionDateTime, p.auctioneer_name as auctioneerName, p.auction_link as auctionLink, "
+                +
+                "p.image_link as imageLink, p.type, p.status, " +
+                "pa.zip_code as zipCode, pa.city, pa.state, pa.street, pa.number, pa.neighborhood " +
                 "FROM property p " +
                 "LEFT JOIN property_address pa ON p.address_id = pa.id" + filterSql +
                 orderBySql +
@@ -72,8 +78,40 @@ public class ListPropertiesQuery {
         params.addValue("limit", limit);
         params.addValue("offset", offset);
 
-        List<PropertyList> content = jdbcTemplate.query(dataSql, params,
-                new BeanPropertyRowMapper<>(PropertyList.class));
+        List<PropertyList> content = jdbcTemplate.query(dataSql, params, (rs, rowNum) -> {
+            PropertyList property = new PropertyList();
+            property.setId(UUID.fromString(rs.getString("id")));
+            property.setName(rs.getString("name"));
+            property.setDescription(rs.getString("description"));
+            property.setValuedPrice(rs.getDouble("valuedPrice"));
+            property.setCurrentPrice(rs.getDouble("currentPrice"));
+            property.setAuctionDateTime(
+                    rs.getTimestamp("auctionDateTime") != null ? rs.getTimestamp("auctionDateTime").toLocalDateTime()
+                            : null);
+            property.setAuctioneerName(rs.getString("auctioneerName"));
+            property.setAuctionLink(rs.getString("auctionLink"));
+            property.setImageLink(rs.getString("imageLink"));
+
+            String typeStr = rs.getString("type");
+            if (typeStr != null)
+                property.setType(EPropertyType.valueOf(typeStr));
+
+            String statusStr = rs.getString("status");
+            if (statusStr != null)
+                property.setStatus(EPropertyStatus.valueOf(statusStr));
+
+            PropertyList.PropertyAddressList address = new PropertyList.PropertyAddressList();
+            address.setZipCode(rs.getString("zipCode"));
+            address.setCity(rs.getString("city"));
+            address.setState(rs.getString("state"));
+            address.setStreet(rs.getString("street"));
+            address.setNumber(rs.getString("number"));
+            address.setNeighborhood(rs.getString("neighborhood"));
+            property.setAddress(address);
+
+            return property;
+        });
+
         int totalPages = (int) Math.ceil((double) totalElements / limit);
 
         return new PaginatedResponse<>(content, filters.getPage(), limit, totalElements, totalPages);
