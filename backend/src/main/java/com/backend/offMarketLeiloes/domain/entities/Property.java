@@ -10,6 +10,9 @@ import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
+import com.backend.offMarketLeiloes.domain.enums.EPropertyStatus;
+import com.backend.offMarketLeiloes.domain.enums.EPropertyType;
+
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -47,6 +50,26 @@ public class Property {
 
     @Column(nullable = false)
     private Double currentPrice;
+
+    @Column(updatable = true, nullable = false)
+    private LocalDateTime auctionDateTime;
+
+    @Column(nullable = false)
+    private String auctioneerName;
+
+    @Column(nullable = false)
+    private String auctionLink;
+
+    @Column(nullable = true)
+    private String imageLink;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private EPropertyType type;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private EPropertyStatus status;
 
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "address_id", referencedColumnName = "id")
