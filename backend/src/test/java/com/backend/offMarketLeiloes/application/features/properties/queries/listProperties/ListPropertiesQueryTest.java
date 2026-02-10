@@ -49,9 +49,9 @@ class ListPropertiesQueryTest {
                 addressId, state, city);
 
         jdbcTemplate.update(
-                "INSERT INTO property (id, name, description, valued_price, current_price, address_id, created_at, updated_at) "
+                "INSERT INTO property (id, name, description, valued_price, current_price, address_id, auction_date_time, auctioneer_name, auction_link, status, type, created_at, updated_at) "
                         +
-                        "VALUES (random_uuid(), ?, 'Description', ?, ?, ?, now(), now())",
+                        "VALUES (random_uuid(), ?, 'Description', ?, ?, ?, now(), 'Auctioneer', 'http://link.com', 'ACTIVE', 'HOUSE', now(), now())",
                 name, valuedPrice, currentPrice, addressId);
     }
 
