@@ -20,3 +20,8 @@ src/main/java/com/projeto/
 └── web/                         # Porta de Entrada (Adapters)
     └── controllers/             # Endpoints REST (Thin Controllers)
 ```
+
+Leiloeiros suportados:
+
+- [nakakogueleiloes.com.br](https://www.nakakogueleiloes.com.br/home/)
+- [kleiloes.com.br](https://www.kleiloes.com.br/)
