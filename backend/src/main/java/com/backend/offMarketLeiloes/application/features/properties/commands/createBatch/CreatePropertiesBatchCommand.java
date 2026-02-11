@@ -9,6 +9,8 @@ import org.springframework.transaction.annotation.Transactional;
 import com.backend.offMarketLeiloes.application.features.properties.commands.createBatch.viewModels.CreatePropertyRequest;
 import com.backend.offMarketLeiloes.domain.entities.Property;
 import com.backend.offMarketLeiloes.domain.entities.PropertyAddress;
+import com.backend.offMarketLeiloes.domain.enums.EPropertyStatus;
+import com.backend.offMarketLeiloes.domain.enums.EPropertyType;
 import com.backend.offMarketLeiloes.domain.repositories.PropertyRepository;
 
 import lombok.RequiredArgsConstructor;
@@ -20,16 +22,22 @@ public class CreatePropertiesBatchCommand {
     private final PropertyRepository propertyRepository;
 
     @Transactional
-    public void execute(List<CreatePropertyRequest> requests) {
+    public void execute(List<CreatePropertyRequest> requests) throws Exception {
         if (requests == null || requests.isEmpty()) {
             return;
         }
 
         List<Property> properties = requests.stream()
+                .filter(request -> !propertyRepository.existsByNameAndCurrentPriceAndDescription(
+                        request.getName(),
+                        request.getCurrentPrice(),
+                        request.getDescription()))
                 .map(this::mapToEntity)
                 .collect(Collectors.toList());
 
-        propertyRepository.saveAll(properties);
+        if (!properties.isEmpty()) {
+            propertyRepository.saveAll(properties);
+        }
     }
 
     private Property mapToEntity(CreatePropertyRequest request) {
@@ -42,8 +50,8 @@ public class CreatePropertiesBatchCommand {
         property.setAuctioneerName(request.getAuctioneerName());
         property.setAuctionLink(request.getAuctionLink());
         property.setImageLink(request.getImageLink());
-        property.setType(request.getType());
-        property.setStatus(request.getStatus());
+        property.setType(EPropertyType.valueOf(request.getType()));
+        property.setStatus(EPropertyStatus.valueOf(request.getStatus()));
 
         if (request.getAddress() != null) {
             PropertyAddress address = new PropertyAddress();

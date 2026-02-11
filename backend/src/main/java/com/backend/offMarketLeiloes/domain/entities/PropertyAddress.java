@@ -33,25 +33,25 @@ public class PropertyAddress implements Serializable {
     @Column(updatable = true, nullable = false)
     private LocalDateTime updatedAt = LocalDateTime.now();
 
-    @Column(nullable = false)
+    @Column(nullable = true)
     private String zipCode;
 
-    @Column(nullable = false)
+    @Column(nullable = true)
     private String city;
 
-    @Column(nullable = false)
+    @Column(nullable = true)
     private String state;
 
     @Column(nullable = false)
     private String country;
 
-    @Column(nullable = false)
+    @Column(nullable = true)
     private String street;
 
-    @Column(nullable = false)
+    @Column(nullable = true)
     private String number;
 
-    @Column(nullable = false)
+    @Column(nullable = true)
     private String neighborhood;
 
     @Column

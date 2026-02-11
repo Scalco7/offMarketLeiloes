@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Pattern;
 
+import org.springframework.stereotype.Component;
+
 import com.backend.offMarketLeiloes.application.common.utils.DateParser;
 import com.backend.offMarketLeiloes.application.common.utils.NumberParser;
 import com.backend.offMarketLeiloes.application.features.properties.commands.createBatch.viewModels.CreatePropertyAddressRequest;
@@ -19,7 +21,9 @@ import java.time.LocalDateTime;
 
 import com.backend.offMarketLeiloes.domain.enums.EPropertyStatus;
 import com.backend.offMarketLeiloes.domain.enums.EPropertyType;
+import com.backend.offMarketLeiloes.domain.enums.EScraperSites;
 
+@Component
 public class KlocknerLeiloesScraper implements AuctionScraper {
         private final String auctioneerName = "KlocknerLeiloes";
         private final String url = "https://www.kleiloes.com.br/busca?tipo=Im%C3%B3veis";
@@ -126,8 +130,8 @@ public class KlocknerLeiloesScraper implements AuctionScraper {
                                         property.setName(name);
                                         property.setValuedPrice(valuedPrice);
                                         property.setCurrentPrice(currentPrice);
-                                        property.setType(type);
-                                        property.setStatus(status);
+                                        property.setType(type.name());
+                                        property.setStatus(status.name());
 
                                         properties.add(property);
                                         System.out.println("(" + auctioneerName + ") Imóvel adicionado: "
@@ -147,7 +151,7 @@ public class KlocknerLeiloesScraper implements AuctionScraper {
         }
 
         @Override
-        public boolean supports(String siteName) {
-                return siteName.equalsIgnoreCase(auctioneerName);
+        public boolean supports(EScraperSites site) {
+                return site == EScraperSites.KLOCKNER_LEILOES;
         }
 }
