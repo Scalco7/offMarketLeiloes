@@ -49,7 +49,7 @@ class AccountControllerTest {
         request.setEmail("api@example.com");
         request.setPassword("password123");
 
-        mockMvc.perform(post("/accounts")
+        mockMvc.perform(post("/accounts/register")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isCreated())
@@ -64,7 +64,7 @@ class AccountControllerTest {
         request.setEmail("invalid-email");
         request.setPassword("password123");
 
-        mockMvc.perform(post("/accounts")
+        mockMvc.perform(post("/accounts/register")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isBadRequest());

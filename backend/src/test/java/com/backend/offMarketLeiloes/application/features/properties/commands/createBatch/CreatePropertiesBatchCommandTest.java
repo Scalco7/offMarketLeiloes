@@ -42,7 +42,7 @@ class CreatePropertiesBatchCommandTest {
     }
 
     @Test
-    void shouldCreatePropertiesInBatch() {
+    void shouldCreatePropertiesInBatch() throws Exception {
         CreatePropertyAddressRequest addressRequest1 = CreatePropertyAddressRequest.builder()
                 .zipCode("12345678")
                 .city("São Paulo")
@@ -71,8 +71,8 @@ class CreatePropertiesBatchCommandTest {
                 .auctionDateTime(LocalDateTime.now().plusDays(1))
                 .auctioneerName("Auctioneer 1")
                 .auctionLink("http://link1.com")
-                .type(EPropertyType.HOUSE)
-                .status(EPropertyStatus.ACTIVE)
+                .type(EPropertyType.HOUSE.name())
+                .status(EPropertyStatus.ACTIVE.name())
                 .address(addressRequest1)
                 .build();
 
@@ -84,8 +84,8 @@ class CreatePropertiesBatchCommandTest {
                 .auctionDateTime(LocalDateTime.now().plusDays(2))
                 .auctioneerName("Auctioneer 2")
                 .auctionLink("http://link2.com")
-                .type(EPropertyType.APARTMENT)
-                .status(EPropertyStatus.ACTIVE)
+                .type(EPropertyType.APARTMENT.name())
+                .status(EPropertyStatus.ACTIVE.name())
                 .address(addressRequest2)
                 .build();
 
@@ -104,14 +104,53 @@ class CreatePropertiesBatchCommandTest {
         Property p2 = savedProperties.stream().filter(p -> p.getName().equals("Property 2")).findFirst().orElse(null);
         assertNotNull(p2);
         assertNotNull(p2.getAddress());
-        assertEquals("São Paulo", p2.getAddress().getCity());
+        assertEquals("Rio de Janeiro", p2.getAddress().getCity());
         assertEquals(p2, p2.getAddress().getProperty());
     }
 
     @Test
-    void shouldDoNothingWhenListIsEmpty() {
+    void shouldDoNothingWhenListIsEmpty() throws Exception {
         createPropertiesBatchCommand.execute(List.of());
         List<Property> savedProperties = propertyRepository.findAll();
         assertEquals(0, savedProperties.size());
+    }
+
+    @Test
+    void shouldNotCreateDuplicateProperties() throws Exception {
+        CreatePropertyAddressRequest addressRequest = CreatePropertyAddressRequest.builder()
+                .zipCode("12345678")
+                .city("São Paulo")
+                .state("SP")
+                .country("Brasil")
+                .street("Rua Teste")
+                .number("123")
+                .neighborhood("Bairro Teste")
+                .build();
+
+        CreatePropertyRequest propertyRequest = CreatePropertyRequest.builder()
+                .name("Duplicate Property")
+                .description("Duplicate Description")
+                .valuedPrice(100000.0)
+                .currentPrice(80000.0)
+                .auctionDateTime(LocalDateTime.now().plusDays(1))
+                .auctioneerName("Auctioneer 1")
+                .auctionLink("http://link1.com")
+                .type(EPropertyType.HOUSE.name())
+                .status(EPropertyStatus.ACTIVE.name())
+                .address(addressRequest)
+                .build();
+
+        // Primeira execução
+        createPropertiesBatchCommand.execute(List.of(propertyRequest));
+        assertEquals(1, propertyRepository.count());
+
+        // Segunda execução com o mesmo objeto
+        createPropertiesBatchCommand.execute(List.of(propertyRequest));
+        assertEquals(1, propertyRepository.count(),
+                "Não deve inserir propriedades duplicadas (nome, preço e descrição)");
+
+        // Terceira execução com um lote contendo duplicatas internas
+        createPropertiesBatchCommand.execute(List.of(propertyRequest, propertyRequest));
+        assertEquals(1, propertyRepository.count(), "Não deve inserir duplicatas internas no mesmo lote");
     }
 }

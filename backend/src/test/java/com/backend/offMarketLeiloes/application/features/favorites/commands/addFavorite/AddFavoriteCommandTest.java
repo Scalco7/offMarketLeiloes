@@ -15,6 +15,8 @@ import org.springframework.transaction.annotation.Transactional;
 import com.backend.offMarketLeiloes.application.features.favorites.commands.addFavorite.viewModels.AddFavoriteRequest;
 import com.backend.offMarketLeiloes.domain.entities.Account;
 import com.backend.offMarketLeiloes.domain.entities.Property;
+import com.backend.offMarketLeiloes.domain.enums.EPropertyStatus;
+import com.backend.offMarketLeiloes.domain.enums.EPropertyType;
 import com.backend.offMarketLeiloes.domain.repositories.AccountRepository;
 import com.backend.offMarketLeiloes.domain.repositories.FavoritePropertyRepository;
 import com.backend.offMarketLeiloes.domain.repositories.PropertyRepository;
@@ -56,6 +58,11 @@ class AddFavoriteCommandTest {
         testProperty.setDescription("Description");
         testProperty.setValuedPrice(100000.0);
         testProperty.setCurrentPrice(90000.0);
+        testProperty.setAuctionDateTime(java.time.LocalDateTime.now().plusDays(1));
+        testProperty.setAuctioneerName("Auctioneer");
+        testProperty.setAuctionLink("http://link.com");
+        testProperty.setStatus(EPropertyStatus.ACTIVE);
+        testProperty.setType(EPropertyType.HOUSE);
         testProperty = propertyRepository.saveAndFlush(testProperty);
 
         // Mock Security Context

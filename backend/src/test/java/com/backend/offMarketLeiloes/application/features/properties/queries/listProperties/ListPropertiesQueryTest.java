@@ -7,15 +7,12 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.jdbc.test.autoconfigure.AutoConfigureTestDatabase;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.backend.offMarketLeiloes.application.common.dto.PaginatedResponse;
 import com.backend.offMarketLeiloes.application.features.properties.queries.listProperties.viewModels.ListPropertiesFilters;
 import com.backend.offMarketLeiloes.application.features.properties.queries.listProperties.viewModels.PropertyList;
-
-import java.util.UUID;
 
 @SpringBootTest
 @AutoConfigureTestDatabase
@@ -27,12 +24,15 @@ class ListPropertiesQueryTest {
     private ListPropertiesQuery listPropertiesQuery;
 
     @Autowired
-    private JdbcTemplate jdbcTemplate;
+    private com.backend.offMarketLeiloes.domain.repositories.PropertyRepository propertyRepository;
+
+    @Autowired
+    private com.backend.offMarketLeiloes.domain.repositories.FavoritePropertyRepository favoritePropertyRepository;
 
     @BeforeEach
     void setUp() {
-        jdbcTemplate.execute("DELETE FROM property");
-        jdbcTemplate.execute("DELETE FROM property_address");
+        favoritePropertyRepository.deleteAll();
+        propertyRepository.deleteAll();
 
         insertProperty("House A", 500000.0, 400000.0, "SP", "São Paulo");
         insertProperty("House B", 300000.0, 250000.0, "RJ", "Rio de Janeiro");
@@ -41,18 +41,28 @@ class ListPropertiesQueryTest {
     }
 
     private void insertProperty(String name, Double valuedPrice, Double currentPrice, String state, String city) {
-        UUID addressId = UUID.randomUUID();
-        jdbcTemplate.update(
-                "INSERT INTO property_address (id, state, city, zip_code, country, street, number, neighborhood, created_at, updated_at) "
-                        +
-                        "VALUES (?, ?, ?, '00000', 'Brazil', 'Street', '1', 'Bairro', now(), now())",
-                addressId, state, city);
+        com.backend.offMarketLeiloes.domain.entities.PropertyAddress address = new com.backend.offMarketLeiloes.domain.entities.PropertyAddress();
+        address.setState(state);
+        address.setCity(city);
+        address.setZipCode("00000");
+        address.setCountry("Brazil");
+        address.setStreet("Street");
+        address.setNumber("1");
+        address.setNeighborhood("Bairro");
 
-        jdbcTemplate.update(
-                "INSERT INTO property (id, name, description, valued_price, current_price, address_id, auction_date_time, auctioneer_name, auction_link, status, type, created_at, updated_at) "
-                        +
-                        "VALUES (random_uuid(), ?, 'Description', ?, ?, ?, now(), 'Auctioneer', 'http://link.com', 'ACTIVE', 'HOUSE', now(), now())",
-                name, valuedPrice, currentPrice, addressId);
+        com.backend.offMarketLeiloes.domain.entities.Property property = new com.backend.offMarketLeiloes.domain.entities.Property();
+        property.setName(name);
+        property.setDescription("Description");
+        property.setValuedPrice(valuedPrice);
+        property.setCurrentPrice(currentPrice);
+        property.setAddress(address);
+        property.setAuctionDateTime(java.time.LocalDateTime.now());
+        property.setAuctioneerName("Auctioneer");
+        property.setAuctionLink("http://link.com");
+        property.setStatus(com.backend.offMarketLeiloes.domain.enums.EPropertyStatus.ACTIVE);
+        property.setType(com.backend.offMarketLeiloes.domain.enums.EPropertyType.HOUSE);
+
+        propertyRepository.saveAndFlush(property);
     }
 
     @Test

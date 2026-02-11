@@ -28,6 +28,11 @@ public class CreatePropertiesBatchCommand {
         }
 
         List<Property> properties = requests.stream()
+                .collect(Collectors.toMap(
+                        r -> r.getName() + "|" + r.getCurrentPrice() + "|" + r.getDescription(),
+                        r -> r,
+                        (existing, replacement) -> existing))
+                .values().stream()
                 .filter(request -> !propertyRepository.existsByNameAndCurrentPriceAndDescription(
                         request.getName(),
                         request.getCurrentPrice(),

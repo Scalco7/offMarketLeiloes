@@ -63,8 +63,9 @@ class ListFavoritePropertiesQueryTest {
     private UUID insertProperty(String name, Double currentPrice) {
         UUID id = UUID.randomUUID();
         jdbcTemplate.update(
-                "INSERT INTO property (id, name, description, valued_price, current_price, created_at, updated_at) " +
-                        "VALUES (?, ?, 'Description', 100000.0, ?, now(), now())",
+                "INSERT INTO property (id, name, description, valued_price, current_price, auction_date_time, auctioneer_name, auction_link, status, type, created_at, updated_at) "
+                        +
+                        "VALUES (?, ?, 'Description', 100000.0, ?, now(), 'Auctioneer', 'http://link.com', 'ACTIVE', 'HOUSE', now(), now())",
                 id, name, currentPrice);
         return id;
     }

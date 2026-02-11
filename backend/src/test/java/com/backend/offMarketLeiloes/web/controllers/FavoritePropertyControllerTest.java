@@ -23,6 +23,8 @@ import com.backend.offMarketLeiloes.application.features.favorites.commands.remo
 import com.backend.offMarketLeiloes.domain.entities.Account;
 import com.backend.offMarketLeiloes.domain.entities.FavoriteProperty;
 import com.backend.offMarketLeiloes.domain.entities.Property;
+import com.backend.offMarketLeiloes.domain.enums.EPropertyStatus;
+import com.backend.offMarketLeiloes.domain.enums.EPropertyType;
 import com.backend.offMarketLeiloes.domain.repositories.AccountRepository;
 import com.backend.offMarketLeiloes.domain.repositories.FavoritePropertyRepository;
 import com.backend.offMarketLeiloes.domain.repositories.PropertyRepository;
@@ -68,6 +70,11 @@ class FavoritePropertyControllerTest {
         testProperty.setDescription("Description");
         testProperty.setValuedPrice(100000.0);
         testProperty.setCurrentPrice(90000.0);
+        testProperty.setAuctionDateTime(java.time.LocalDateTime.now().plusDays(1));
+        testProperty.setAuctioneerName("Auctioneer");
+        testProperty.setAuctionLink("http://link.com");
+        testProperty.setType(EPropertyType.HOUSE);
+        testProperty.setStatus(EPropertyStatus.ACTIVE);
         testProperty = propertyRepository.saveAndFlush(testProperty);
 
         // Mock Security Context for the commands executed by the controller
