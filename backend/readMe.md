@@ -21,7 +21,13 @@ src/main/java/com/projeto/
     └── controllers/             # Endpoints REST (Thin Controllers)
 ```
 
-Leiloeiros suportados:
+## Leiloeiros suportados:
 
 - [nakakogueleiloes.com.br](https://www.nakakogueleiloes.com.br/home/)
 - [kleiloes.com.br](https://www.kleiloes.com.br/)
+
+## Test Scrappers
+
+```bash
+mvn test -Dtest=KlocknerLeiloesScraperTest
+```
