@@ -4,7 +4,11 @@ import Footer from '~/components/molecules/footer.vue'
 </script>
 
 <template>
-    <Header />
-    <slot />
-    <Footer />
+    <div>
+        <Header />
+        <v-main>
+            <slot />
+        </v-main>
+        <Footer />
+    </div>
 </template>
