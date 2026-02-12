@@ -8,12 +8,19 @@ const password = ref('')
 const showPassword = ref(false)
 const loading = ref(false)
 
-const handleRegister = () => {
+const { register } = useAuth()
+const router = useRouter()
+
+async function handleRegister() {
     loading.value = true
-    console.log('Register clicked', { name: name.value, email: email.value, password: password.value })
-    setTimeout(() => {
+    try {
+        await register({ name: name.value, email: email.value, password: password.value })
+        router.push('/')
+    } catch (error) {
+        console.error('Registration error:', error)
+    } finally {
         loading.value = false
-    }, 2000)
+    }
 }
 </script>
 

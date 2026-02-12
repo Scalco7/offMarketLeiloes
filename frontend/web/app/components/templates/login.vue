@@ -7,12 +7,20 @@ const password = ref('')
 const showPassword = ref(false)
 const loading = ref(false)
 
-const handleLogin = () => {
+const { login } = useAuth()
+const router = useRouter()
+
+async function handleLogin() {
     loading.value = true
-    console.log('Login clicked', { email: email.value, password: password.value })
-    setTimeout(() => {
+    try {
+        await login({ email: email.value, password: password.value })
+        router.push('/')
+    } catch (error) {
+        console.error('Login error:', error)
+        // Here you could add a toast or alert for the user
+    } finally {
         loading.value = false
-    }, 2000)
+    }
 }
 </script>
 
