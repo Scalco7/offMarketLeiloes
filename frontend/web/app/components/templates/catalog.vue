@@ -14,8 +14,7 @@ const emit = defineEmits(['updatePage'])
     <v-container fluid class="pa-0">
         <v-img src="~/assets/leilao.png" cover min-height="100" max-height="400"></v-img>
         <v-container>
-            <PropertiesList v-if="properties" :properties="properties" @updatePage="emit('updatePage', $event)" />
-            <v-progress-circular v-else indeterminate></v-progress-circular>
+            <PropertiesList :properties="properties" @updatePage="emit('updatePage', $event)" />
         </v-container>
     </v-container>
 </template>
