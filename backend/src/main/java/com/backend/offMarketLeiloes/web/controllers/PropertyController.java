@@ -60,6 +60,10 @@ public class PropertyController {
     @PostMapping("/batch")
     @ResponseStatus(HttpStatus.CREATED)
     public void createPropertiesBatch(@RequestBody @Valid List<CreatePropertyRequest> requests) {
-        createPropertiesBatchCommand.execute(requests);
+        try {
+            createPropertiesBatchCommand.execute(requests);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }
