@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { IListPropertiesResponse, IPropertyList } from "~/utils/api/property/queries/listProperties/listProperties.interface";
+import type { IPropertyList, IListPropertiesResponse } from "~/api/modules/property/queries/list-properties.query";
 import PropertyBox from "../molecules/propertyBox.vue";
 import { EPropertyStatus } from "~/utils/enums/propertyStatus.enum";
 import { EPropertyType } from "~/utils/enums/propertyType.enum";

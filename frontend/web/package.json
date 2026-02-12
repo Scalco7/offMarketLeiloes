@@ -12,6 +12,7 @@
   "dependencies": {
     "@mdi/font": "^7.4.47",
     "@pinia/nuxt": "^0.11.3",
+    "axios": "^1.13.5",
     "nuxt": "^4.3.0",
     "nuxt-lucide-icons": "^2.0.0",
     "pinia": "^3.0.4",
