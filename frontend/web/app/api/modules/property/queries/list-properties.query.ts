@@ -41,8 +41,16 @@ export interface IPropertyList {
 
 export type IListPropertiesResponse = IPageableResponse<IPropertyList>;
 
-export const listPropertiesQuery = async (
+export async function listPropertiesQuery(
   params?: IListPropertiesQueryRequest,
-): Promise<AxiosResponse<IListPropertiesResponse>> => {
-  return apiClient.get("/properties", { params });
-};
+): Promise<AxiosResponse<IListPropertiesResponse>> {
+  return apiClient.get("/properties", { params }).then((response) => {
+    response.data.content = response.data.content.map(
+      (property: IPropertyList) => {
+        property.auctionDateTime = new Date(property.auctionDateTime);
+        return property;
+      },
+    );
+    return response;
+  });
+}

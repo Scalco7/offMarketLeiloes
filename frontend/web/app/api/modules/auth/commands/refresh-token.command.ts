@@ -7,8 +7,8 @@ export interface IRefreshTokenCommandRequest {
   accountId: string;
 }
 
-export const refreshTokenCommand = async (
+export async function refreshTokenCommand(
   payload: IRefreshTokenCommandRequest,
-): Promise<AxiosResponse<IAuthResponse>> => {
+): Promise<AxiosResponse<IAuthResponse>> {
   return apiClient.post("/auth/refresh-token", payload);
-};
+}

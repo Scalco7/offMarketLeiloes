@@ -16,10 +16,11 @@ interface PropertyProps {
     isFavorite?: boolean;
 }
 
-const props = withDefaults(defineProps<PropertyProps>(), {
-    isFavorite: false,
-    discount: 0
-});
+const props = defineProps<PropertyProps>()
+
+onMounted(() => {
+    console.log(props)
+})
 
 defineEmits(['favorite-toggle', 'click']);
 </script>

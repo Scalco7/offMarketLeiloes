@@ -7,8 +7,8 @@ export interface ILoginCommandRequest {
   password: string;
 }
 
-export const loginCommand = async (
+export async function loginCommand(
   payload: ILoginCommandRequest,
-): Promise<AxiosResponse<IAuthResponse>> => {
+): Promise<AxiosResponse<IAuthResponse>> {
   return apiClient.post("/auth/login", payload);
-};
+}

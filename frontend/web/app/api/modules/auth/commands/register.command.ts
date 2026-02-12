@@ -8,8 +8,8 @@ export interface IRegisterCommandRequest {
   password: string;
 }
 
-export const registerCommand = async (
+export async function registerCommand(
   payload: IRegisterCommandRequest,
-): Promise<AxiosResponse<IAuthResponse>> => {
+): Promise<AxiosResponse<IAuthResponse>> {
   return apiClient.post("/accounts/register", payload);
-};
+}
