@@ -1,4 +1,5 @@
 import axios from "axios";
+import { useToastStore } from "~/stores/toast";
 
 const apiClient = axios.create({
   baseURL: import.meta.env.VITE_API_BASE_URL || "http://localhost:8080/api",
@@ -42,6 +43,7 @@ apiClient.interceptors.response.use(
   },
   async (error) => {
     const originalRequest = error.config;
+    const toast = useToastStore();
 
     if (error.response?.status === 401 && !originalRequest._retry) {
       if (isRefreshing) {
@@ -65,13 +67,10 @@ apiClient.interceptors.response.use(
 
       if (!refreshToken) {
         isRefreshing = false;
-        // Optional: redirect to login
-        // window.location.href = '/login';
         return Promise.reject(error);
       }
 
       try {
-        // Use a clean axios instance for refresh to avoid interceptor loop
         const { data } = await axios.post(
           `${apiClient.defaults.baseURL}/auth/refresh-token`,
           {
@@ -96,11 +95,19 @@ apiClient.interceptors.response.use(
         localStorage.removeItem("accessToken");
         localStorage.removeItem("refreshToken");
         localStorage.removeItem("accountId");
-        // window.location.href = '/login';
         return Promise.reject(refreshError);
       } finally {
         isRefreshing = false;
       }
+    }
+
+    // Handle and show other errors
+    if (import.meta.client && error.response) {
+      const message =
+        error.response.data?.message ||
+        error.message ||
+        "Ocorreu um erro inesperado";
+      toast.error(message);
     }
 
     return Promise.reject(error);
