@@ -1,14 +1,17 @@
 <script setup lang="ts">
+import { computed, onMounted } from 'vue';
+import { actioneerLogoData } from '~/utils/helpers/actioneer-logo-data';
+import formatDate from '~/utils/helpers/formatDate';
 import formatDateTime from '~/utils/helpers/formatDateTime';
 import formatMoney from '~/utils/helpers/formatMoney';
+import { normalizeStateName } from '~/utils/helpers/normalizeStateName';
 
 interface PropertyProps {
     imageLink?: string;
-    actioneerImgPath?: string;
     auctioneerName: string;
     endDate: Date;
-    city: string;
-    state: string;
+    city?: string;
+    state?: string;
     title: string;
     currentPrice: number;
     oldPrice?: number;
@@ -17,6 +20,20 @@ interface PropertyProps {
 }
 
 const props = defineProps<PropertyProps>()
+
+const stateName = computed(() => {
+    if (!props.state) return ""
+    else if (props.city) return props.state
+    else return normalizeStateName(props.state)
+})
+
+const actioneerLogoPath = computed(() => {
+    return actioneerLogoData[props.auctioneerName]?.logoPath || null
+})
+
+const actioneerLogoBackgroundColor = computed(() => {
+    return actioneerLogoData[props.auctioneerName]?.backgroundColor || null
+})
 
 onMounted(() => {
     console.log(props)
@@ -29,10 +46,10 @@ defineEmits(['favorite-toggle', 'click']);
     <v-card rounded="xl" elevation="4" class="overflow-hidden border-0" @click="$emit('click')" width="270"
         height="440">
         <v-img :src="props.imageLink" height="250" cover class="position-relative d-flex align-end">
-            <div v-if="props.actioneerImgPath" class="d-flex align-end justify-end w-100" style="z-index: 1">
-                <div class="bg-primary px-3 py-1 d-flex align-center justify-center shadow-sm"
-                    style="border-top-left-radius: 8px; width: fit-content;">
-                    <v-img :src="props.actioneerImgPath" width="80" height="30px" contain />
+            <div v-if="actioneerLogoPath" class="d-flex align-end justify-end w-100" style="z-index: 1">
+                <div class="px-3 py-1 d-flex align-center justify-center shadow-sm"
+                    :style="`background-color: ${actioneerLogoBackgroundColor}; border-top-left-radius: 8px; width: fit-content;`">
+                    <v-img :src="actioneerLogoPath" width="80" height="30px" contain />
                 </div>
             </div>
             <div v-else class="d-flex align-end justify-end w-100 " style="z-index: 1">
@@ -44,7 +61,8 @@ defineEmits(['favorite-toggle', 'click']);
 
             <div class="bg-tertiary text-white text-center py-2 text-body-2 font-weight-medium position-relative"
                 style="z-index: 2; width: 270px;">
-                Data do leilão: {{ formatDateTime(props.endDate) }}
+                Data do leilão: {{ props.endDate.getHours() == 0 ? formatDate(props.endDate) :
+                    formatDateTime(props.endDate) }}
             </div>
 
             <template v-slot:placeholder>
@@ -60,7 +78,12 @@ defineEmits(['favorite-toggle', 'click']);
                     <div class="d-flex align-center justify-space-between">
                         <div class="d-flex align-center text-grey-darken-1 text-body-2">
                             <LucideMapPin :size="20" class="mr-1 text-grey" />
-                            <span class="text-truncate font-weight-medium">{{ props.city }} - {{ props.state }} </span>
+                            <span class="text-truncate font-weight-medium">{{ props.city || props.state ? `${props.city
+                                ?? ""}
+                                ${props.city && props.state
+                                    ? "-" :
+                                    ""} ${stateName}` : "À Consultar"
+                            }}</span>
                         </div>
 
                         <v-btn icon variant="plain" density="comfortable" class="mr-n2" :color="'grey-darken-1'"
