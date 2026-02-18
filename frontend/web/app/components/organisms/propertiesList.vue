@@ -4,6 +4,7 @@ import PropertySkeleton from "../molecules/propertySkeleton.vue";
 import PropertyBox from "../molecules/propertyBox.vue";
 
 interface IPropertiesListProps {
+    title: string
     properties?: IListPropertiesResponse
 }
 
@@ -28,7 +29,7 @@ function toggleFavorite(property: IPropertyList) {
 <template>
     <v-container>
         <v-col class="d-flex flex-column ga-10">
-            <h2>Imóveis em Destaque</h2>
+            <h2>{{ title }}</h2>
             <v-row class="ga-4" v-if="properties">
                 <PropertyBox v-for="property in properties.content" :key="property.id" :imageLink="property.imageLink"
                     :title="property.name" :currentPrice="property.currentPrice" :oldPrice="property.valuedPrice"

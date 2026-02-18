@@ -1,4 +1,4 @@
-import { listPropertiesQuery } from "./queries/list-properties.query";
+import { listPropertiesQuery } from "./queries/list-properties/list-properties.query";
 
 export const propertyActions = {
   commands: {},

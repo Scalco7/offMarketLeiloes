@@ -75,6 +75,7 @@ public class ListFavoritePropertiesQuery {
             property.setAuctioneerName(rs.getString("auctioneerName"));
             property.setAuctionLink(rs.getString("auctionLink"));
             property.setImageLink(rs.getString("imageLink"));
+            property.setIsFavorite(true);
 
             String typeStr = rs.getString("type");
             if (typeStr != null) {

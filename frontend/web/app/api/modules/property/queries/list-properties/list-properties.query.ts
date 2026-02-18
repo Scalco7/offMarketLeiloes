@@ -1,15 +1,15 @@
 import type { AxiosResponse } from "axios";
 import apiClient from "~/api/client";
-import type { IListFavoritesFilters } from "../favorites.interface";
 import type {
+  IListPropertiesQueryRequest,
   IListPropertiesResponse,
   IPropertyList,
-} from "../../property/queries/list-properties.query";
+} from "./list-properties.interface";
 
-export async function listFavoritesQuery(
-  params?: IListFavoritesFilters,
+export async function listPropertiesQuery(
+  params?: IListPropertiesQueryRequest,
 ): Promise<AxiosResponse<IListPropertiesResponse>> {
-  return apiClient.get("/favorites", { params }).then((response) => {
+  return apiClient.get("/properties", { params }).then((response) => {
     response.data.content = response.data.content.map(
       (property: IPropertyList) => {
         property.auctionDateTime = new Date(property.auctionDateTime);

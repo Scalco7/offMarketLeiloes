@@ -1,5 +1,3 @@
-import type { AxiosResponse } from "axios";
-import apiClient from "~/api/client";
 import type { EPropertyStatus } from "~/utils/enums/propertyStatus.enum";
 import type { EPropertyType } from "~/utils/enums/propertyType.enum";
 import type { IPageableResponse } from "~/utils/interfaces/pageableResponse";
@@ -41,17 +39,3 @@ export interface IPropertyList {
 }
 
 export type IListPropertiesResponse = IPageableResponse<IPropertyList>;
-
-export async function listPropertiesQuery(
-  params?: IListPropertiesQueryRequest,
-): Promise<AxiosResponse<IListPropertiesResponse>> {
-  return apiClient.get("/properties", { params }).then((response) => {
-    response.data.content = response.data.content.map(
-      (property: IPropertyList) => {
-        property.auctionDateTime = new Date(property.auctionDateTime);
-        return property;
-      },
-    );
-    return response;
-  });
-}

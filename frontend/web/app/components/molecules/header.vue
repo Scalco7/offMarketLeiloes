@@ -24,6 +24,10 @@ function goToHome() {
 function gotToFavorites() {
     rounter.push('/favorites')
 }
+
+const isInFavoritesPath = computed(() => {
+    return rounter.currentRoute.value.path === '/favorites'
+})
 </script>
 
 <template>
@@ -33,12 +37,17 @@ function gotToFavorites() {
                 <v-col class="flex">
                     <v-img src="~/assets/logo.png" alt="Logo" width="200" @click="goToHome" class="cursor-pointer" />
                 </v-col>
-                <v-row align="center" justify="center" class="ga-4" style="max-width: 300px;">
+                <v-row align="center" justify="center" class="ga-4" style="max-width: 350px;">
                     <template v-if="isLoggedIn">
-                        <Button variant="tertiary" :loading="false" @click="gotToFavorites">
-                            <LucideStar />
-                            <span class="ml-2">Favoritos</span>
+                        <Button v-if="isInFavoritesPath" variant="tertiary" :loading="false" @click="goToHome">
+                            <LucideHome />
+                            <span class="ml-2">Todos os Imóveis</span>
                         </Button>
+                        <Button v-else variant="tertiary" :loading="false" @click="gotToFavorites">
+                            <LucideStar />
+                            <span class="ml-2">Meus Favoritos</span>
+                        </Button>
+
                         <Button variant="outlined-white" :loading="false" @click="logout">
                             <LucideLogOut />
                             <span class="ml-2">Sair</span>
