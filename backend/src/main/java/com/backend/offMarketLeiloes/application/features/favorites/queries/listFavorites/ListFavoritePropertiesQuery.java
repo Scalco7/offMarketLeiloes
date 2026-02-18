@@ -50,6 +50,8 @@ public class ListFavoritePropertiesQuery {
                 "p.auction_date_time as auctionDateTime, p.auctioneer_name as auctioneerName, p.auction_link as auctionLink, "
                 +
                 "p.image_link as imageLink, p.type, p.status, " +
+                "ROUND(CAST(((p.valued_price - p.current_price) / NULLIF(p.valued_price, 0)) * 100 AS numeric), 2) as discount, "
+                +
                 "pa.zip_code as zipCode, pa.city, pa.state, pa.street, pa.number, pa.neighborhood " +
                 "FROM favorite_property fp " +
                 "INNER JOIN property p ON fp.property_id = p.id " +
@@ -69,6 +71,7 @@ public class ListFavoritePropertiesQuery {
             property.setDescription(rs.getString("description"));
             property.setValuedPrice(rs.getDouble("valuedPrice"));
             property.setCurrentPrice(rs.getDouble("currentPrice"));
+            property.setDiscount(rs.getDouble("discount"));
             property.setAuctionDateTime(
                     rs.getTimestamp("auctionDateTime") != null ? rs.getTimestamp("auctionDateTime").toLocalDateTime()
                             : null);

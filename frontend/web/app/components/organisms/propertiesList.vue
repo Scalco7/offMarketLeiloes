@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import type { IListPropertiesResponse, IPropertyList } from "~/api/modules/property/queries/list-properties.query";
 import PropertySkeleton from "../molecules/propertySkeleton.vue";
 import PropertyBox from "../molecules/propertyBox.vue";
+import type { IListPropertiesResponse, IPropertyList } from "~/api/modules/property/queries/list-properties/list-properties.interface";
 
 interface IPropertiesListProps {
     title: string
@@ -35,7 +35,8 @@ function toggleFavorite(property: IPropertyList) {
                     :title="property.name" :currentPrice="property.currentPrice" :oldPrice="property.valuedPrice"
                     :endDate="property.auctionDateTime" :city="property.address.city" :state="property.address.state"
                     :auctioneerName="property.auctioneerName" :isFavorite="property.isFavorite"
-                    @click="navigateToProperty(property)" @toggleFavorite="toggleFavorite(property)" />
+                    :discount="property.discount" @click="navigateToProperty(property)"
+                    @toggleFavorite="toggleFavorite(property)" />
             </v-row>
             <v-row v-else class="ga-4">
                 <PropertySkeleton v-for="i in 12" :key="i" />

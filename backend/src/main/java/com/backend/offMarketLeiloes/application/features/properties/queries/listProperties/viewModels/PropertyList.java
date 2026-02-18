@@ -55,6 +55,9 @@ public class PropertyList {
     @Schema(description = "Indica se o imóvel é favorito do usuário autenticado", example = "true")
     private Boolean isFavorite;
 
+    @Schema(description = "Porcentagem de desconto entre o valor de avaliação e o valor atual", example = "40.0")
+    private Double discount;
+
     @Schema(description = "Endereço do imóvel")
     private PropertyAddressList address;
 

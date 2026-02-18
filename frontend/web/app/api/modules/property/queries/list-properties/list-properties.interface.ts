@@ -36,6 +36,7 @@ export interface IPropertyList {
   status: EPropertyStatus;
   address: IPropertyAddress;
   isFavorite: boolean;
+  discount: number;
 }
 
 export type IListPropertiesResponse = IPageableResponse<IPropertyList>;
