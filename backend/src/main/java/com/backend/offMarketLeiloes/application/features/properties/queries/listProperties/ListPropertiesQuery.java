@@ -13,6 +13,9 @@ import com.backend.offMarketLeiloes.application.features.properties.queries.list
 import com.backend.offMarketLeiloes.application.features.properties.queries.listProperties.viewModels.PropertyList;
 import com.backend.offMarketLeiloes.domain.enums.EPropertyStatus;
 import com.backend.offMarketLeiloes.domain.enums.EPropertyType;
+import com.backend.offMarketLeiloes.domain.entities.Account;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 
 @Service
 public class ListPropertiesQuery {
@@ -62,16 +65,34 @@ public class ListPropertiesQuery {
             }
         }
 
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        UUID currentAccountId = null;
+        if (authentication != null && authentication.getPrincipal() instanceof Account) {
+            currentAccountId = ((Account) authentication.getPrincipal()).getId();
+        }
+
         String dataSql = "SELECT p.id, p.name, p.description, p.valued_price as valuedPrice, p.current_price as currentPrice, "
                 +
                 "p.auction_date_time as auctionDateTime, p.auctioneer_name as auctioneerName, p.auction_link as auctionLink, "
                 +
                 "p.image_link as imageLink, p.type, p.status, " +
-                "pa.zip_code as zipCode, pa.city, pa.state, pa.street, pa.number, pa.neighborhood " +
-                "FROM property p " +
-                "LEFT JOIN property_address pa ON p.address_id = pa.id" + filterSql +
-                orderBySql +
-                " LIMIT :limit OFFSET :offset";
+                "pa.zip_code as zipCode, pa.city, pa.state, pa.street, pa.number, pa.neighborhood ";
+
+        if (currentAccountId != null) {
+            dataSql += ", CASE WHEN fp.id IS NOT NULL THEN true ELSE false END as isFavorite ";
+            params.addValue("currentAccountId", currentAccountId);
+        } else {
+            dataSql += ", false as isFavorite ";
+        }
+
+        dataSql += "FROM property p " +
+                "LEFT JOIN property_address pa ON p.address_id = pa.id ";
+
+        if (currentAccountId != null) {
+            dataSql += "LEFT JOIN favorite_property fp ON fp.property_id = p.id AND fp.account_id = :currentAccountId ";
+        }
+
+        dataSql += filterSql + orderBySql + " LIMIT :limit OFFSET :offset";
 
         int limit = filters.getPageSize();
         int offset = (filters.getPage() - 1) * filters.getPageSize();
@@ -108,6 +129,8 @@ public class ListPropertiesQuery {
             address.setNumber(rs.getString("number"));
             address.setNeighborhood(rs.getString("neighborhood"));
             property.setAddress(address);
+
+            property.setIsFavorite(rs.getBoolean("isFavorite"));
 
             return property;
         });

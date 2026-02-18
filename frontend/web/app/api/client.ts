@@ -101,7 +101,6 @@ apiClient.interceptors.response.use(
       }
     }
 
-    // Handle and show other errors
     if (import.meta.client && error.response) {
       const message =
         error.response.data?.message ||

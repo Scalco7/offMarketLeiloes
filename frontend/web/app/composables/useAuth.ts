@@ -77,8 +77,6 @@ export const useAuth = () => {
       localStorage.removeItem("refreshToken");
       localStorage.removeItem("accountId");
     }
-
-    useRouter().push("/login");
   }
 
   function getAccountId(accessToken: string): string {

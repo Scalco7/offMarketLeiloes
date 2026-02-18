@@ -52,6 +52,9 @@ public class PropertyList {
     @Schema(description = "Status do imóvel", example = "ACTIVE")
     private EPropertyStatus status;
 
+    @Schema(description = "Indica se o imóvel é favorito do usuário autenticado", example = "true")
+    private Boolean isFavorite;
+
     @Schema(description = "Endereço do imóvel")
     private PropertyAddressList address;
 

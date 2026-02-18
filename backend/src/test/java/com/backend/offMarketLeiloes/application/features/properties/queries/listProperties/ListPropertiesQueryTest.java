@@ -162,4 +162,52 @@ class ListPropertiesQueryTest {
         assertEquals("House A", result.getContent().get(2).getName()); // 400k
         assertEquals("House B", result.getContent().get(3).getName()); // 250k
     }
+
+    @Autowired
+    private com.backend.offMarketLeiloes.domain.repositories.AccountRepository accountRepository;
+
+    @Test
+    void shouldReturnIsFavoriteTrueWhenLoggedAndFavorited() {
+        // Setup account
+        com.backend.offMarketLeiloes.domain.entities.Account account = new com.backend.offMarketLeiloes.domain.entities.Account();
+        account.setName("Test User");
+        account.setEmail("test@test.com");
+        account.setPassword("password");
+        account = accountRepository.saveAndFlush(account);
+
+        // Get a property
+        com.backend.offMarketLeiloes.domain.entities.Property property = propertyRepository.findAll().get(0);
+
+        // Favorite it
+        com.backend.offMarketLeiloes.domain.entities.FavoriteProperty favorite = new com.backend.offMarketLeiloes.domain.entities.FavoriteProperty();
+        favorite.setAccount(account);
+        favorite.setProperty(property);
+        favoritePropertyRepository.saveAndFlush(favorite);
+
+        // Mock authentication
+        org.springframework.security.authentication.UsernamePasswordAuthenticationToken auth = new org.springframework.security.authentication.UsernamePasswordAuthenticationToken(
+                account, null, null);
+        org.springframework.security.core.context.SecurityContextHolder.getContext().setAuthentication(auth);
+
+        try {
+            ListPropertiesFilters filters = new ListPropertiesFilters();
+            PaginatedResponse<PropertyList> result = listPropertiesQuery.execute(filters);
+
+            PropertyList favorited = result.getContent().stream()
+                    .filter(p -> p.getId().equals(property.getId()))
+                    .findFirst()
+                    .get();
+
+            assertEquals(true, favorited.getIsFavorite());
+
+            PropertyList notFavorited = result.getContent().stream()
+                    .filter(p -> !p.getId().equals(property.getId()))
+                    .findFirst()
+                    .get();
+
+            assertEquals(false, notFavorited.getIsFavorite());
+        } finally {
+            org.springframework.security.core.context.SecurityContextHolder.clearContext();
+        }
+    }
 }

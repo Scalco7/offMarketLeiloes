@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { IListPropertiesResponse } from "~/api/modules/property/queries/list-properties.query";
+import type { IListPropertiesResponse, IPropertyList } from "~/api/modules/property/queries/list-properties.query";
 import PropertySkeleton from "../molecules/propertySkeleton.vue";
 import PropertyBox from "../molecules/propertyBox.vue";
 
@@ -8,7 +8,7 @@ interface IPropertiesListProps {
 }
 
 const props = defineProps<IPropertiesListProps>()
-const emit = defineEmits(['updatePage'])
+const emit = defineEmits(['updatePage', 'toggleFavorite'])
 
 const page = ref(props.properties?.number || 1)
 
@@ -16,6 +16,13 @@ watch(page, (newPage) => {
     emit('updatePage', newPage)
 })
 
+function navigateToProperty(property: IPropertyList) {
+    navigateTo(property.auctionLink, { external: true, open: { target: '_blank' } })
+}
+
+function toggleFavorite(property: IPropertyList) {
+    emit('toggleFavorite', property)
+}
 </script>
 
 <template>
@@ -26,7 +33,8 @@ watch(page, (newPage) => {
                 <PropertyBox v-for="property in properties.content" :key="property.id" :imageLink="property.imageLink"
                     :title="property.name" :currentPrice="property.currentPrice" :oldPrice="property.valuedPrice"
                     :endDate="property.auctionDateTime" :city="property.address.city" :state="property.address.state"
-                    :auctioneerName="property.auctioneerName" />
+                    :auctioneerName="property.auctioneerName" :isFavorite="property.isFavorite"
+                    @click="navigateToProperty(property)" @toggleFavorite="toggleFavorite(property)" />
             </v-row>
             <v-row v-else class="ga-4">
                 <PropertySkeleton v-for="i in 12" :key="i" />

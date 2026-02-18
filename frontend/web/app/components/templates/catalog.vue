@@ -7,14 +7,15 @@ interface ICatalogProps {
 }
 
 const props = defineProps<ICatalogProps>()
-const emit = defineEmits(['updatePage'])
+const emit = defineEmits(['updatePage', 'toggleFavorite'])
 </script>
 
 <template>
     <v-container fluid class="pa-0">
         <v-img src="~/assets/leilao.png" cover min-height="100" max-height="400"></v-img>
         <v-container>
-            <PropertiesList :properties="properties" @updatePage="emit('updatePage', $event)" />
+            <PropertiesList :properties="properties" @updatePage="emit('updatePage', $event)"
+                @toggleFavorite="emit('toggleFavorite', $event)" />
         </v-container>
     </v-container>
 </template>

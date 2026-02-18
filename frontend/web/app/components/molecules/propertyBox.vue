@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, onMounted } from 'vue';
+import { computed } from 'vue';
 import { actioneerLogoData } from '~/utils/helpers/actioneer-logo-data';
 import formatDate from '~/utils/helpers/formatDate';
 import formatDateTime from '~/utils/helpers/formatDateTime';
@@ -35,11 +35,7 @@ const actioneerLogoBackgroundColor = computed(() => {
     return actioneerLogoData[props.auctioneerName]?.backgroundColor || null
 })
 
-onMounted(() => {
-    console.log(props)
-})
-
-defineEmits(['favorite-toggle', 'click']);
+defineEmits(['toggleFavorite', 'click']);
 </script>
 
 <template>
@@ -87,7 +83,7 @@ defineEmits(['favorite-toggle', 'click']);
                         </div>
 
                         <v-btn icon variant="plain" density="comfortable" class="mr-n2" :color="'grey-darken-1'"
-                            @click.stop="$emit('favorite-toggle')">
+                            @click.stop="$emit('toggleFavorite')">
                             <LucideStar :size="25" :style="props.isFavorite ? 'fill: currentColor' : ''" />
                         </v-btn>
                     </div>

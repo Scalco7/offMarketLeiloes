@@ -15,9 +15,6 @@ async function handleLogin() {
     try {
         await login({ email: email.value, password: password.value })
         router.push('/')
-    } catch (error) {
-        console.error('Login error:', error)
-        // Here you could add a toast or alert for the user
     } finally {
         loading.value = false
     }
