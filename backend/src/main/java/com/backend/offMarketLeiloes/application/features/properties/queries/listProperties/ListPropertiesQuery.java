@@ -74,7 +74,7 @@ public class ListPropertiesQuery {
                 " LIMIT :limit OFFSET :offset";
 
         int limit = filters.getPageSize();
-        int offset = filters.getPage() * filters.getPageSize();
+        int offset = (filters.getPage() - 1) * filters.getPageSize();
         params.addValue("limit", limit);
         params.addValue("offset", offset);
 

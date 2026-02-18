@@ -5,13 +5,13 @@ import com.backend.offMarketLeiloes.application.features.favorites.queries.listF
 import com.backend.offMarketLeiloes.application.features.properties.queries.listProperties.viewModels.PropertyList;
 import com.backend.offMarketLeiloes.domain.entities.Account;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.UUID;
 
 @Service
 public class ListFavoritePropertiesQuery {
@@ -45,19 +45,64 @@ public class ListFavoritePropertiesQuery {
             }
         }
 
-        String dataSql = "SELECT p.id, p.name, p.description, p.valued_price as valuedPrice, p.current_price as currentPrice FROM favorite_property fp "
+        String dataSql = "SELECT p.id, p.name, p.description, p.valued_price as valuedPrice, p.current_price as currentPrice, "
                 +
-                "INNER JOIN property p ON fp.property_id = p.id" + filterSql +
+                "p.auction_date_time as auctionDateTime, p.auctioneer_name as auctioneerName, p.auction_link as auctionLink, "
+                +
+                "p.image_link as imageLink, p.type, p.status, " +
+                "pa.zip_code as zipCode, pa.city, pa.state, pa.street, pa.number, pa.neighborhood " +
+                "FROM favorite_property fp " +
+                "INNER JOIN property p ON fp.property_id = p.id " +
+                "LEFT JOIN property_address pa ON p.address_id = pa.id" + filterSql +
                 orderBySql +
                 " LIMIT :limit OFFSET :offset";
 
         int limit = filters.getPageSize();
-        int offset = filters.getPage() * filters.getPageSize();
+        int offset = (filters.getPage() - 1) * filters.getPageSize();
         params.addValue("limit", limit);
         params.addValue("offset", offset);
 
-        List<PropertyList> content = jdbcTemplate.query(dataSql, params,
-                new BeanPropertyRowMapper<>(PropertyList.class));
+        List<PropertyList> content = jdbcTemplate.query(dataSql, params, (rs, rowNum) -> {
+            PropertyList property = new PropertyList();
+            property.setId(UUID.fromString(rs.getString("id")));
+            property.setName(rs.getString("name"));
+            property.setDescription(rs.getString("description"));
+            property.setValuedPrice(rs.getDouble("valuedPrice"));
+            property.setCurrentPrice(rs.getDouble("currentPrice"));
+            property.setAuctionDateTime(
+                    rs.getTimestamp("auctionDateTime") != null ? rs.getTimestamp("auctionDateTime").toLocalDateTime()
+                            : null);
+            property.setAuctioneerName(rs.getString("auctioneerName"));
+            property.setAuctionLink(rs.getString("auctionLink"));
+            property.setImageLink(rs.getString("imageLink"));
+
+            String typeStr = rs.getString("type");
+            if (typeStr != null) {
+                try {
+                    property.setType(com.backend.offMarketLeiloes.domain.enums.EPropertyType.valueOf(typeStr));
+                } catch (IllegalArgumentException e) {
+                }
+            }
+
+            String statusStr = rs.getString("status");
+            if (statusStr != null) {
+                try {
+                    property.setStatus(com.backend.offMarketLeiloes.domain.enums.EPropertyStatus.valueOf(statusStr));
+                } catch (IllegalArgumentException e) {
+                }
+            }
+
+            PropertyList.PropertyAddressList address = new PropertyList.PropertyAddressList();
+            address.setZipCode(rs.getString("zipCode"));
+            address.setCity(rs.getString("city"));
+            address.setState(rs.getString("state"));
+            address.setStreet(rs.getString("street"));
+            address.setNumber(rs.getString("number"));
+            address.setNeighborhood(rs.getString("neighborhood"));
+            property.setAddress(address);
+
+            return property;
+        });
 
         int totalPages = (int) Math.ceil((double) totalElements / limit);
 
