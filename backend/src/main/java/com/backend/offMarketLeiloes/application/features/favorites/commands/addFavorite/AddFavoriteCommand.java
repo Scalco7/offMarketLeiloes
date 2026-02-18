@@ -7,6 +7,8 @@ import com.backend.offMarketLeiloes.domain.entities.Property;
 import com.backend.offMarketLeiloes.domain.repositories.FavoritePropertyRepository;
 import com.backend.offMarketLeiloes.domain.repositories.PropertyRepository;
 import lombok.RequiredArgsConstructor;
+import com.backend.offMarketLeiloes.application.common.exceptions.BusinessException;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -23,10 +25,10 @@ public class AddFavoriteCommand {
         Account currentAccount = (Account) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
         Property property = propertyRepository.findById(request.getPropertyId())
-                .orElseThrow(() -> new RuntimeException("Imóvel não encontrado"));
+                .orElseThrow(() -> new BusinessException("Imóvel não encontrado.", HttpStatus.NOT_FOUND));
 
         if (favoritePropertyRepository.existsByAccountAndProperty(currentAccount, property)) {
-            throw new RuntimeException("Este imóvel já está nos seus favoritos");
+            throw new BusinessException("Este imóvel já está nos seus favoritos.", HttpStatus.BAD_REQUEST);
         }
 
         FavoriteProperty favoriteProperty = new FavoriteProperty();

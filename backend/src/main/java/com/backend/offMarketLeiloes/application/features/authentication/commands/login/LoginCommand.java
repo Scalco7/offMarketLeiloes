@@ -9,6 +9,9 @@ import com.backend.offMarketLeiloes.domain.repositories.AccountRepository;
 import com.backend.offMarketLeiloes.infrastructure.authentication.PasswordHashService;
 import com.backend.offMarketLeiloes.infrastructure.authentication.TokenService;
 
+import com.backend.offMarketLeiloes.application.common.exceptions.BusinessException;
+import org.springframework.http.HttpStatus;
+
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 
@@ -23,10 +26,10 @@ public class LoginCommand {
     @Transactional
     public AuthenticationResponse execute(LoginRequest request) {
         Account account = accountRepository.findByEmail(request.getEmail())
-                .orElseThrow(() -> new RuntimeException("Conta não encontrada"));
+                .orElseThrow(() -> new BusinessException("E-mail não encontrado.", HttpStatus.NOT_FOUND));
 
         if (!passwordHashService.verifyPassword(request.getPassword(), account.getPassword())) {
-            throw new RuntimeException("Senha inválida");
+            throw new BusinessException("Senha inválida.", HttpStatus.UNAUTHORIZED);
         }
 
         return tokenService.generateAuthenticationResponse(account);

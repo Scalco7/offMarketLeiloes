@@ -9,6 +9,9 @@ import com.backend.offMarketLeiloes.domain.repositories.AccountRepository;
 import com.backend.offMarketLeiloes.infrastructure.authentication.PasswordHashService;
 import com.backend.offMarketLeiloes.infrastructure.authentication.TokenService;
 
+import com.backend.offMarketLeiloes.application.common.exceptions.BusinessException;
+import org.springframework.http.HttpStatus;
+
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 
@@ -23,7 +26,7 @@ public class CreateAccountCommand {
     @Transactional
     public AuthenticationResponse execute(CreateAccountRequest request) {
         if (accountRepository.findByEmail(request.getEmail()).isPresent()) {
-            throw new RuntimeException("Conta já cadastrada com este email");
+            throw new BusinessException("E-mail já cadastrado no sistema.", HttpStatus.CONFLICT);
         }
 
         Account account = new Account();

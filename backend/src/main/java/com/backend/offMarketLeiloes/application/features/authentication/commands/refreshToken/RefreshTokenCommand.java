@@ -12,6 +12,9 @@ import com.backend.offMarketLeiloes.domain.entities.Account;
 import com.backend.offMarketLeiloes.domain.repositories.RefreshTokenRepository;
 import com.backend.offMarketLeiloes.infrastructure.authentication.TokenService;
 
+import com.backend.offMarketLeiloes.application.common.exceptions.BusinessException;
+import org.springframework.http.HttpStatus;
+
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 
@@ -26,11 +29,12 @@ public class RefreshTokenCommand {
     public AuthenticationResponse execute(RefreshTokenRequest request) {
         RefreshToken refreshToken = refreshTokenRepository
                 .findByTokenAndAccountId(request.getRefreshToken(), UUID.fromString(request.getAccountId()))
-                .orElseThrow(() -> new RuntimeException("Refresh Token inválido para esta conta"));
+                .orElseThrow(() -> new BusinessException("Sessão inválida. Por favor, faça login novamente.",
+                        HttpStatus.UNAUTHORIZED));
 
         if (refreshToken.getExpiresAt().isBefore(LocalDateTime.now())) {
             refreshTokenRepository.delete(refreshToken);
-            throw new RuntimeException("Refresh Token expirado");
+            throw new BusinessException("Sessão expirada. Por favor, faça login novamente.", HttpStatus.UNAUTHORIZED);
         }
 
         Account account = refreshToken.getAccount();

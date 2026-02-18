@@ -1,5 +1,6 @@
 import axios from "axios";
 import { useToastStore } from "~/stores/toast";
+import type { IStandardError } from "~/utils/interfaces/standardError";
 
 const apiClient = axios.create({
   baseURL: import.meta.env.VITE_API_BASE_URL || "http://localhost:8080/api",
@@ -45,7 +46,17 @@ apiClient.interceptors.response.use(
     const originalRequest = error.config;
     const toast = useToastStore();
 
-    if (error.response?.status === 401 && !originalRequest._retry) {
+    console.log(error);
+
+    const isAuthRequest =
+      originalRequest.url?.includes("/auth/login") ||
+      originalRequest.url?.includes("/auth/refresh-token");
+
+    if (
+      error.response?.status === 401 &&
+      !originalRequest._retry &&
+      !isAuthRequest
+    ) {
       if (isRefreshing) {
         return new Promise((resolve, reject) => {
           failedQueue.push({ resolve, reject });
@@ -67,6 +78,7 @@ apiClient.interceptors.response.use(
 
       if (!refreshToken) {
         isRefreshing = false;
+        toast.error("Sessão expirada. Faça login novamente.");
         return Promise.reject(error);
       }
 
@@ -101,12 +113,49 @@ apiClient.interceptors.response.use(
       }
     }
 
-    if (import.meta.client && error.response) {
-      const message =
-        error.response.data?.message ||
-        error.message ||
-        "Ocorreu um erro inesperado";
-      toast.error(message);
+    if (import.meta.client) {
+      if (error.response) {
+        // Erro retornado pelo servidor (4xx, 5xx)
+        // Se for 401 e não for um retry, o código acima já tratou (ou tentou tratar)
+        // EXCETO se for uma requisição de auth, que deve mostrar o erro
+        if (
+          error.response.status !== 401 ||
+          originalRequest._retry ||
+          isAuthRequest
+        ) {
+          let message = "Ocorreu um erro no servidor";
+          let errorType = "Error";
+
+          if (error.response.data && typeof error.response.data === "object") {
+            const errorData = error.response.data as IStandardError;
+            message = errorData.message || message;
+            errorType = errorData.error || errorType;
+
+            console.error(
+              `[API Error] ${error.response.status} ${errorType}: ${message}`,
+              {
+                path: errorData.path,
+                timestamp: errorData.timestamp,
+                status: errorData.status,
+                fullError: error.response.data,
+              },
+            );
+          } else {
+            message = error.message || message;
+            console.error(`[API Error] ${error.response.status}: ${message}`);
+          }
+
+          toast.error(message);
+        }
+      } else if (error.request) {
+        console.error("[API Error] No response received:", error.request);
+        toast.error(
+          "Não foi possível conectar ao servidor. Verifique sua conexão.",
+        );
+      } else {
+        console.error("[API Error] Setup error:", error.message);
+        toast.error("Ocorreu um erro interno ao processar a requisição.");
+      }
     }
 
     return Promise.reject(error);
