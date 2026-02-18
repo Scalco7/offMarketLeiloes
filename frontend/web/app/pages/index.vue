@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import type { IListPropertiesResponse, IPropertyList } from '~/api/modules/property/queries/list-properties.query'
 import { useAuth } from '~/composables/useAuth'
 import Catalog from '~/components/templates/catalog.vue'
 import type { IFavoriteRequest } from '~/api/modules/favorites/favorites.interface'
 import { useToastStore } from '~/stores/toast'
+import type { IListPropertiesResponse, IPropertyList } from '~/api/modules/property/queries/list-properties/list-properties.interface'
 
 const { $api } = useNuxtApp()
 const { isLoggedIn } = useAuth()
@@ -21,9 +21,19 @@ function fetchProperties(
     sortByPrice?: "asc" | "desc"
 ) {
     const pageSize = 12
+    scrollToTop()
     $api.property.queries.list({ page, pageSize, name, minPrice, maxPrice, state, city, sortByPrice }).then((response) => {
         properties.value = response.data
     })
+}
+
+function scrollToTop() {
+    if (!window) return
+
+    window.scrollTo({
+        top: 0,
+        behavior: 'smooth'
+    });
 }
 
 function handleUpdatePage(page: number) {
@@ -32,7 +42,6 @@ function handleUpdatePage(page: number) {
 }
 
 function handleToggleFavorite(property: IPropertyList) {
-    console.log(isLoggedIn.value)
     if (!isLoggedIn.value) {
         navigateTo('/login')
         return
@@ -55,6 +64,10 @@ function handleToggleFavorite(property: IPropertyList) {
 }
 
 onMounted(() => {
+    fetchProperties()
+})
+
+watch(() => isLoggedIn.value, () => {
     fetchProperties()
 })
 </script>
