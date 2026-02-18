@@ -15,4 +15,9 @@ export default defineNuxtConfig({
       },
     },
   },
+  app: {
+    head: {
+      title: "Off Market Leilões",
+    },
+  },
 });
