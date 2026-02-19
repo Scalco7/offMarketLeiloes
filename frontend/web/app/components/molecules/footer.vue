@@ -5,7 +5,7 @@ const institutionalLinks = [
     { text: 'Quem Somos', to: '/about' },
     { text: 'Contato', to: '/contacts' },
     { text: 'Blog', to: '#' },
-    { text: 'Política de Privacidade', to: '#' },
+    { text: 'Política de Privacidade', to: '/privacy-policy' },
     { text: 'Política de Cookies', to: '#' },
 ];
 

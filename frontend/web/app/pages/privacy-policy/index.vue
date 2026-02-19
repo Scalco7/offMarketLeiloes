@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import Contact from '~/components/templates/contact.vue'
+import PrivacyPolicy from '~/components/templates/privacyPolicy.vue'
 
 definePageMeta({
     layout: 'default'
@@ -7,5 +7,5 @@ definePageMeta({
 </script>
 
 <template>
-    <Contact />
+    <PrivacyPolicy />
 </template>
