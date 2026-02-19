@@ -10,6 +10,8 @@ import com.backend.offMarketLeiloes.application.common.dto.PaginatedResponse;
 import com.backend.offMarketLeiloes.application.features.properties.queries.listProperties.ListPropertiesQuery;
 import com.backend.offMarketLeiloes.application.features.properties.queries.listProperties.viewModels.ListPropertiesFilters;
 import com.backend.offMarketLeiloes.application.features.properties.queries.listProperties.viewModels.PropertyList;
+import com.backend.offMarketLeiloes.application.features.properties.queries.listAvailableStates.ListAvailableStatesQuery;
+import com.backend.offMarketLeiloes.application.features.properties.queries.listAvailableStates.viewModels.AvailableState;
 import com.backend.offMarketLeiloes.application.features.properties.commands.createBatch.CreatePropertiesBatchCommand;
 import com.backend.offMarketLeiloes.application.features.properties.commands.createBatch.viewModels.CreatePropertyRequest;
 import java.util.List;
@@ -37,7 +39,20 @@ public class PropertyController {
     private ListPropertiesQuery listPropertiesQuery;
 
     @Autowired
+    private ListAvailableStatesQuery listAvailableStatesQuery;
+
+    @Autowired
     private CreatePropertiesBatchCommand createPropertiesBatchCommand;
+
+    @Operation(summary = "Retorna os estados disponíveis e a quantidade de imóveis", description = "Retorna uma lista de estados que possuem imóveis ativos e a contagem de imóveis em cada um.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Lista retornada com sucesso"),
+            @ApiResponse(responseCode = "500", description = "Erro interno no servidor")
+    })
+    @GetMapping("/states")
+    public List<AvailableState> listAvailableStates() {
+        return listAvailableStatesQuery.execute();
+    }
 
     @Operation(summary = "Consulta de imóveis com filtros", description = "Retorna uma página de imóveis baseada nos filtros fornecidos. Esta rota é pública.")
     @ApiResponses(value = {
