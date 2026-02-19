@@ -1,0 +1,67 @@
+services:
+  # Database Service
+  db:
+    image: postgres:15-alpine
+    container_name: offmarket-db
+    restart: always
+    environment:
+      POSTGRES_DB: offmarket
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: local_password
+    ports:
+      - "5432:5432"
+    volumes:
+      - offmarket_postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d offmarket"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    networks:
+      - app-network
+
+  # Backend API Service
+  backend:
+    build:
+      context: ../backend
+      dockerfile: Dockerfile
+    container_name: offmarket-backend
+    restart: always
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/offmarket
+      - SPRING_DATASOURCE_USERNAME=postgres
+      - SPRING_DATASOURCE_PASSWORD=local_password
+      - SPRING_JPA_HIBERNATE_DDL_AUTO=update
+      - SPRING_PROFILES_ACTIVE=prod
+      - JWT_SECRET=local-development-secret-key-12345
+    ports:
+      - "8080:8080"
+    networks:
+      - app-network
+
+  # Frontend Web Service
+  frontend:
+    build:
+      context: ../frontend/web
+      dockerfile: Dockerfile
+    container_name: offmarket-frontend
+    restart: always
+    depends_on:
+      - backend
+    environment:
+      - VITE_API_BASE_URL=http://localhost:8080/api
+      - NODE_ENV=production
+    ports:
+      - "3000:3000"
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge
+
+volumes:
+  offmarket_postgres_data:
