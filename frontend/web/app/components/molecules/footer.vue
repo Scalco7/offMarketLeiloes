@@ -4,16 +4,13 @@ import Button from '../atoms/button.vue';
 const institutionalLinks = [
     { text: 'Quem Somos', to: '/about' },
     { text: 'Contato', to: '/contacts' },
-    { text: 'Blog', to: '#' },
     { text: 'Política de Privacidade', to: '/privacy-policy' },
-    { text: 'Política de Cookies', to: '#' },
 ];
 
 const propertyLinks = [
-    { text: 'Encontre seu imóvel', to: '#' },
-    { text: 'Imóveis Caixa', to: '#' },
-    { text: 'Simulador de Financiamento', to: '#' },
-    { text: 'Agenda de Leilões Caixa', to: '#' },
+    { text: 'Encontre seu imóvel', to: '/' },
+    { text: 'Imóveis Caixa', to: 'https://venda-imoveis.caixa.gov.br/sistema/busca-imovel.asp?sltTipoBusca=imoveis', target: '_blank' },
+    { text: 'Simulador de Financiamento', to: 'https://www8.caixa.gov.br/siopiinternet-web/simulaOperacaoInternet.do?method=inicializarCasoUso', target: '_blank' },
 ];
 </script>
 
@@ -44,7 +41,8 @@ const propertyLinks = [
                     <v-col cols="12" md="3">
                         <h3 class="text-tertiary text-h8 font-weight-bold mb-2">Imóveis</h3>
                         <div class="d-flex flex-column ga-1">
-                            <NuxtLink v-for="link in propertyLinks" :key="link.text" :to="link.to"
+                            <NuxtLink v-for="link in propertyLinks" :key="link.text" :to="link.to" :target="link.target"
+                                :external="!!link.target"
                                 class="text-white text-decoration-none text-body-2 v-btn--variant-plain opacity-90">
                                 {{ link.text }}
                             </NuxtLink>
