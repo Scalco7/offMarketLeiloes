@@ -122,30 +122,10 @@ function handleSubmit() {
 </template>
 
 <style scoped>
-.contact-template {
-    overflow-x: hidden;
-}
-
 .hero-section {
-    min-height: 50vh;
     background: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url('~/assets/leilao.png');
     background-size: cover;
     background-position: center;
-    position: relative;
-}
-
-.text-primary-gradient {
-    background: linear-gradient(45deg, #1867c0, #5cbbf6);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-}
-
-.info-item {
-    transition: transform 0.3s ease;
-}
-
-.info-item:hover {
-    transform: translateX(10px);
 }
 
 .map-section {
@@ -154,35 +134,5 @@ function handleSubmit() {
     display: flex;
     align-items: center;
     justify-content: center;
-}
-
-.animate-fade-in-up {
-    animation: fadeInUp 0.8s ease backwards;
-}
-
-.delay-1 {
-    animation-delay: 0.2s;
-}
-
-@keyframes fadeInUp {
-    from {
-        opacity: 0;
-        transform: translateY(30px);
-    }
-
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
-:deep(.custom-input .v-field) {
-    border: 1px solid #e0e0e0 !important;
-    transition: border-color 0.3s ease, box-shadow 0.3s ease;
-}
-
-:deep(.custom-input .v-field--focused) {
-    border-color: #1867c0 !important;
-    box-shadow: 0 0 0 4px rgba(24, 103, 192, 0.1) !important;
 }
 </style>

@@ -28,9 +28,3 @@ const emit = defineEmits(['update:modelValue'])
             bg-color="white" class="custom-input"></v-text-field>
     </div>
 </template>
-
-<style scoped>
-:deep(.v-field__input) {
-    min-height: 44px !important;
-}
-</style>

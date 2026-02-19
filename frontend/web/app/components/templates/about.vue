@@ -132,39 +132,11 @@ import { LucideTarget, LucideEye, LucideShieldCheck } from 'lucide-vue-next'
 </template>
 
 <style scoped>
-.about-template {
-    overflow-x: hidden;
-}
-
 .hero-section {
     min-height: 80vh;
     background: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), url('~/assets/leilao.png');
     background-size: cover;
     background-position: center;
-    position: relative;
-}
-
-.text-primary-gradient {
-    background: linear-gradient(45deg, #1867c0, #5cbbf6);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-}
-
-.divider {
-    width: 60px;
-    height: 4px;
-    background: #1867c0;
-    border-radius: 2px;
-}
-
-.value-card {
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
-    border: 1px solid rgba(0, 0, 0, 0.05);
-}
-
-.value-card:hover {
-    transform: translateY(-10px);
-    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1) !important;
 }
 
 .hero-img-mask {
@@ -177,30 +149,5 @@ import { LucideTarget, LucideEye, LucideShieldCheck } from 'lucide-vue-next'
 
 .feature-list {
     list-style: none;
-}
-
-/* Animations */
-.animate-fade-in-up {
-    animation: fadeInUp 0.8s ease backwards;
-}
-
-.delay-1 {
-    animation-delay: 0.2s;
-}
-
-.delay-2 {
-    animation-delay: 0.4s;
-}
-
-@keyframes fadeInUp {
-    from {
-        opacity: 0;
-        transform: translateY(30px);
-    }
-
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
 }
 </style>
