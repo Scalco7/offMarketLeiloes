@@ -2,7 +2,7 @@
 import Button from '../atoms/button.vue';
 
 const institutionalLinks = [
-    { text: 'Quem Somos', to: '#' },
+    { text: 'Quem Somos', to: '/about' },
     { text: 'Contato', to: '#' },
     { text: 'Blog', to: '#' },
     { text: 'Política de Privacidade', to: '#' },

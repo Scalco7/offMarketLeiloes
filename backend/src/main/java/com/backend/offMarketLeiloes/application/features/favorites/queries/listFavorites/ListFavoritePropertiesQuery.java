@@ -27,7 +27,7 @@ public class ListFavoritePropertiesQuery {
         params.addValue("accountId", currentAccount.getId());
 
         if (filters.getName() != null && !filters.getName().isBlank()) {
-            filterSql.append(" AND p.name ILIKE :name");
+            filterSql.append(" AND (p.name ILIKE :name OR p.description ILIKE :name)");
             params.addValue("name", "%" + filters.getName() + "%");
         }
 

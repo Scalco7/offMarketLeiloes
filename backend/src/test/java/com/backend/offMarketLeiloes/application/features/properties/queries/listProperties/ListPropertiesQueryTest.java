@@ -77,6 +77,41 @@ class ListPropertiesQueryTest {
     }
 
     @Test
+    void shouldFilterByDescription() {
+        // Insert a property with a unique description
+        com.backend.offMarketLeiloes.domain.entities.PropertyAddress address = new com.backend.offMarketLeiloes.domain.entities.PropertyAddress();
+        address.setState("SP");
+        address.setCity("São Paulo");
+        address.setZipCode("00000");
+        address.setCountry("Brazil");
+        address.setStreet("Street");
+        address.setNumber("1");
+        address.setNeighborhood("Bairro");
+
+        com.backend.offMarketLeiloes.domain.entities.Property property = new com.backend.offMarketLeiloes.domain.entities.Property();
+        property.setName("Special Property");
+        property.setDescription("This is a very unique property description");
+        property.setValuedPrice(1000000.0);
+        property.setCurrentPrice(900000.0);
+        property.setAddress(address);
+        property.setAuctionDateTime(java.time.LocalDateTime.now());
+        property.setAuctioneerName("Auctioneer");
+        property.setAuctionLink("http://link.com");
+        property.setStatus(com.backend.offMarketLeiloes.domain.enums.EPropertyStatus.ACTIVE);
+        property.setType(com.backend.offMarketLeiloes.domain.enums.EPropertyType.HOUSE);
+
+        propertyRepository.saveAndFlush(property);
+
+        ListPropertiesFilters filters = new ListPropertiesFilters();
+        filters.setName("unique property"); // Searching for part of the description
+
+        PaginatedResponse<PropertyList> result = listPropertiesQuery.execute(filters);
+
+        assertEquals(1, result.getContent().size());
+        assertEquals("Special Property", result.getContent().get(0).getName());
+    }
+
+    @Test
     void shouldFilterByPriceRange() {
         ListPropertiesFilters filters = new ListPropertiesFilters();
         filters.setMinPrice(300000.0);

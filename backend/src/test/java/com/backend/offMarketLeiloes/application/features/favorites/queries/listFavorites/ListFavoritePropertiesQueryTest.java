@@ -99,6 +99,27 @@ class ListFavoritePropertiesQueryTest {
     }
 
     @Test
+    void shouldFilterFavoritesByDescription() {
+        // Insert a property with a unique description
+        UUID id = UUID.randomUUID();
+        jdbcTemplate.update(
+                "INSERT INTO property (id, name, description, valued_price, current_price, auction_date_time, auctioneer_name, auction_link, status, type, created_at, updated_at) "
+                        +
+                        "VALUES (?, ?, ?, 100000.0, 95000.0, now(), 'Auctioneer', 'http://link.com', 'ACTIVE', 'HOUSE', now(), now())",
+                id, "Special Property", "This is a very unique property description");
+
+        favoriteProperty(testAccount.getId(), id);
+
+        ListFavoritePropertiesFilters filters = new ListFavoritePropertiesFilters();
+        filters.setName("unique property");
+
+        PaginatedResponse<PropertyList> result = listFavoritePropertiesQuery.execute(filters);
+
+        assertEquals(1, result.getContent().size());
+        assertEquals("Special Property", result.getContent().get(0).getName());
+    }
+
+    @Test
     void shouldReturnEmptyWhenNoFavoritesMatch() {
         ListFavoritePropertiesFilters filters = new ListFavoritePropertiesFilters();
         filters.setName("NonExistent");
@@ -111,7 +132,7 @@ class ListFavoritePropertiesQueryTest {
     @Test
     void shouldHandlePagination() {
         ListFavoritePropertiesFilters filters = new ListFavoritePropertiesFilters();
-        filters.setPage(0);
+        filters.setPage(1);
         filters.setPageSize(1);
 
         PaginatedResponse<PropertyList> result = listFavoritePropertiesQuery.execute(filters);

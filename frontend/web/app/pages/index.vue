@@ -4,12 +4,14 @@ import Catalog from '~/components/templates/catalog.vue'
 import type { IFavoriteRequest } from '~/api/modules/favorites/favorites.interface'
 import { useToastStore } from '~/stores/toast'
 import type { IListPropertiesResponse, IPropertyList } from '~/api/modules/property/queries/list-properties/list-properties.interface'
+import type { IAvailableState } from '~/api/modules/property/queries/list-available-states/list-available-states.interface'
 
 const { $api } = useNuxtApp()
 const { isLoggedIn } = useAuth()
 const toast = useToastStore()
 
 const properties = ref<IListPropertiesResponse>()
+const availableStates = ref<IAvailableState[]>()
 
 function fetchProperties(
     page: number = 1,
@@ -27,6 +29,12 @@ function fetchProperties(
     })
 }
 
+function fetchAvailableStates() {
+    $api.property.queries.listAvailableStates().then((response) => {
+        availableStates.value = response.data
+    })
+}
+
 function scrollToTop() {
     if (!window) return
 
@@ -36,9 +44,9 @@ function scrollToTop() {
     });
 }
 
-function handleUpdatePage(page: number) {
+function handleUpdatePage(page: number, name?: string, minPrice?: number, maxPrice?: number, state?: string, sortByPrice?: "asc" | "desc") {
     properties.value = undefined
-    fetchProperties(page)
+    fetchProperties(page, name, minPrice, maxPrice, state, undefined, sortByPrice)
 }
 
 function handleToggleFavorite(property: IPropertyList) {
@@ -65,6 +73,7 @@ function handleToggleFavorite(property: IPropertyList) {
 
 onMounted(() => {
     fetchProperties()
+    fetchAvailableStates()
 })
 
 watch(() => isLoggedIn.value, () => {
@@ -73,5 +82,6 @@ watch(() => isLoggedIn.value, () => {
 </script>
 
 <template>
-    <Catalog :properties="properties" @updatePage="handleUpdatePage" @toggleFavorite="handleToggleFavorite" />
+    <Catalog :properties="properties" :availableStates="availableStates" @updatePage="handleUpdatePage"
+        @toggleFavorite="handleToggleFavorite" />
 </template>
