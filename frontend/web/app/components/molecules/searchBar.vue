@@ -7,18 +7,13 @@ import type { IAvailableState } from '~/api/modules/property/queries/list-availa
 
 interface SearchBarProps {
     availableStates?: IAvailableState[]
+    filters: ISearchFilters
 }
 
 const props = defineProps<SearchBarProps>()
 const emit = defineEmits(['search'])
 
-const filters = reactive<ISearchFilters>({
-    name: '',
-    sortByPrice: undefined,
-    minPrice: undefined,
-    maxPrice: undefined,
-    state: ''
-})
+const filters = defineModel<ISearchFilters>('filters', { required: true })
 
 const orderOptions = [
     { title: 'Menor Preço', value: 'asc' },
@@ -36,8 +31,12 @@ const stateOptions = computed(() => {
     }))
 })
 
+watch(() => props.filters, () => {
+    console.log(props.filters)
+}, { deep: true })
+
 function handleSearch() {
-    emit('search', { ...filters })
+    emit('search')
 }
 </script>
 
@@ -56,14 +55,12 @@ function handleSearch() {
                     <SelectInput v-model="filters.sortByPrice" label="Ordenar Por" placeholder="Menor Preço"
                         :items="orderOptions" />
                 </v-col>
-
                 <v-col cols="12" md="3">
-                    <TextInput v-model.number="filters.minPrice" label="Preço Min" placeholder="R$ 0,00"
-                        type="number" />
+                    <TextInput v-model="filters.minPrice" label="Preço Min" placeholder="0,00" isCurrency prefix="R$" />
                 </v-col>
                 <v-col cols="12" md="3">
-                    <TextInput v-model.number="filters.maxPrice" label="Preço Máx" placeholder="R$ 1.000.000,00"
-                        type="number" />
+                    <TextInput v-model="filters.maxPrice" label="Preço Máx" placeholder="1.000.000,00" isCurrency
+                        prefix="R$" />
                 </v-col>
                 <v-col cols="12" md="4">
                     <SelectInput v-model="filters.state" label="Estado" placeholder="Selecione o estado"

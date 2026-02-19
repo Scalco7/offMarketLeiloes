@@ -8,13 +8,20 @@ import type { IAvailableState } from '~/api/modules/property/queries/list-availa
 interface ICatalogProps {
     availableStates?: IAvailableState[]
     properties?: IListPropertiesResponse
+    filters: ISearchFilters
 }
 
 const props = defineProps<ICatalogProps>()
-const emit = defineEmits(['updatePage', 'toggleFavorite'])
+const emit = defineEmits(['updatePage', 'toggleFavorite', 'resetFilters'])
 
-function handleSearch(filters: ISearchFilters) {
-    emit('updatePage', 1, filters.name, filters.minPrice, filters.maxPrice, filters.state, filters.sortByPrice)
+const filters = defineModel<ISearchFilters>('filters', { required: true })
+
+watch(() => props.filters, () => {
+    console.log(props.filters)
+}, { deep: true })
+
+function handleSearch() {
+    emit('updatePage', 1)
 }
 </script>
 
@@ -23,12 +30,13 @@ function handleSearch(filters: ISearchFilters) {
         <div class="d-flex align-center w-100 position-relative" style="padding-bottom: 100px">
             <v-img src="~/assets/leilao.png" cover min-height="100" max-height="400"></v-img>
             <div class="position-absolute d-flex align-center w-100 h-full bottom-0">
-                <SearchBar :availableStates="availableStates" @search="handleSearch" />
+                <SearchBar :availableStates="availableStates" v-model:filters="filters" @search="handleSearch" />
             </div>
         </div>
         <v-container>
             <PropertiesList :properties="properties" @updatePage="emit('updatePage', $event)"
-                @toggleFavorite="emit('toggleFavorite', $event)" title="Imóveis em Destaque" />
+                @toggleFavorite="emit('toggleFavorite', $event)" title="Imóveis em Destaque"
+                @resetFilters="emit('resetFilters')" />
         </v-container>
     </v-container>
 </template>

@@ -54,14 +54,6 @@ const propertyLinks = [
                         <p class="text-white text-body-2 mb-6">
                             Fique por dentro das nossas novidades e promoções
                         </p>
-
-                        <div class="d-flex flex-row align-stretch" style="max-width: 420px;">
-                            <v-text-field placeholder="E-mail" flat hide-details density="compact" variant="solo"
-                                bg-color="white" rounded="s-lg e-0" class="flex-grow-1 h-auto" />
-                            <Button variant="tertiary" :loading="false" rounded="s-0 e-lg" class="h-auto">
-                                <LucideSendHorizonal />
-                            </Button>
-                        </div>
                     </v-col>
                 </v-row>
             </v-row>

@@ -5,6 +5,7 @@ import type { IFavoriteRequest } from '~/api/modules/favorites/favorites.interfa
 import { useToastStore } from '~/stores/toast'
 import type { IListPropertiesResponse, IPropertyList } from '~/api/modules/property/queries/list-properties/list-properties.interface'
 import type { IAvailableState } from '~/api/modules/property/queries/list-available-states/list-available-states.interface'
+import type { ISearchFilters } from '~/utils/interfaces/searchFilters'
 
 const { $api } = useNuxtApp()
 const { isLoggedIn } = useAuth()
@@ -12,15 +13,22 @@ const toast = useToastStore()
 
 const properties = ref<IListPropertiesResponse>()
 const availableStates = ref<IAvailableState[]>()
+const filters = ref<ISearchFilters>({
+    name: '',
+    sortByPrice: undefined,
+    minPrice: undefined,
+    maxPrice: undefined,
+    state: ''
+})
 
 function fetchProperties(
     page: number = 1,
-    name?: string,
-    minPrice?: number,
-    maxPrice?: number,
-    state?: string,
+    name: string | undefined = filters.value.name,
+    minPrice: number | undefined = filters.value.minPrice,
+    maxPrice: number | undefined = filters.value.maxPrice,
+    state: string | undefined = filters.value.state,
     city?: string,
-    sortByPrice?: "asc" | "desc"
+    sortByPrice: "asc" | "desc" | undefined = filters.value.sortByPrice
 ) {
     const pageSize = 12
     scrollToTop()
@@ -44,12 +52,23 @@ function scrollToTop() {
     });
 }
 
-function handleUpdatePage(page: number, name?: string, minPrice?: number, maxPrice?: number, state?: string, sortByPrice?: "asc" | "desc") {
+function handleUpdatePage(page: number) {
     properties.value = undefined
+    const { name, minPrice, maxPrice, state, sortByPrice } = filters.value
     fetchProperties(page, name, minPrice, maxPrice, state, undefined, sortByPrice)
 }
 
+function resetFilters() {
+    filters.value.name = ''
+    filters.value.minPrice = undefined
+    filters.value.maxPrice = undefined
+    filters.value.state = ''
+    filters.value.sortByPrice = undefined
+    handleUpdatePage(1)
+}
+
 function handleToggleFavorite(property: IPropertyList) {
+
     if (!isLoggedIn.value) {
         navigateTo('/login')
         return
@@ -82,6 +101,6 @@ watch(() => isLoggedIn.value, () => {
 </script>
 
 <template>
-    <Catalog :properties="properties" :availableStates="availableStates" @updatePage="handleUpdatePage"
-        @toggleFavorite="handleToggleFavorite" />
+    <Catalog :properties="properties" :availableStates="availableStates" v-model:filters="filters"
+        @updatePage="handleUpdatePage" @toggleFavorite="handleToggleFavorite" @resetFilters="resetFilters" />
 </template>
