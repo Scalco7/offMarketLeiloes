@@ -1,5 +1,5 @@
 <template>
-    <v-card rounded="xl" elevation="4" class="overflow-hidden border-0 bg-white" width="270" height="440">
+    <v-card rounded="xl" elevation="4" class="overflow-hidden border-0 bg-white" height="440">
         <v-skeleton-loader type="image" height="250" class="rounded-0"></v-skeleton-loader>
 
         <div class="pa-0">

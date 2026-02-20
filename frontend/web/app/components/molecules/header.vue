@@ -1,55 +1,59 @@
 <script setup lang="ts">
 import Button from '../atoms/button.vue';
 import { useAuth } from '~/composables/useAuth';
-import { LucideStar, LucideLogOut } from 'lucide-vue-next';
+import { LucideStar, LucideLogOut, LucideMenu, LucideHome } from 'lucide-vue-next';
 
-const rounter = useRouter()
+const router = useRouter()
 const { isLoggedIn, logout } = useAuth()
 
+const emit = defineEmits(['toggle-drawer'])
+
 function goToCadastro() {
-    if (rounter.currentRoute.value.path === '/register') return
-    rounter.push('/register')
+    if (router.currentRoute.value.path === '/register') return
+    router.push('/register')
 }
 
 function goToLogin() {
-    if (rounter.currentRoute.value.path === '/login') return
-    rounter.push('/login')
+    if (router.currentRoute.value.path === '/login') return
+    router.push('/login')
 }
 
 function goToHome() {
-    if (rounter.currentRoute.value.path === '/') return
-    rounter.push('/')
+    if (router.currentRoute.value.path === '/') return
+    router.push('/')
 }
 
 function gotToFavorites() {
-    rounter.push('/favorites')
+    router.push('/favorites')
 }
 
 const isInFavoritesPath = computed(() => {
-    return rounter.currentRoute.value.path === '/favorites'
+    return router.currentRoute.value.path === '/favorites'
 })
 </script>
 
 <template>
     <header class="bg-primary">
         <v-container>
-            <v-row justify="space-between">
-                <v-col class="flex">
-                    <v-img src="~/assets/logo.png" alt="Logo" width="200" @click="goToHome" class="cursor-pointer" />
-                </v-col>
-                <v-row align="center" justify="center" class="ga-4" style="max-width: 350px;">
+            <v-row align="center" justify="space-between" no-gutters>
+                <div class="d-flex align-center">
+                    <v-img src="~/assets/logo.png" alt="Logo" width="160" sm="200" @click="goToHome"
+                        class="cursor-pointer" />
+                </div>
+
+                <div class="d-none d-md-flex ga-4 align-center">
                     <template v-if="isLoggedIn">
                         <Button v-if="isInFavoritesPath" variant="tertiary" :loading="false" @click="goToHome">
-                            <LucideHome />
+                            <LucideHome :size="20" />
                             <span class="ml-2">Todos os Imóveis</span>
                         </Button>
                         <Button v-else variant="tertiary" :loading="false" @click="gotToFavorites">
-                            <LucideStar />
+                            <LucideStar :size="20" />
                             <span class="ml-2">Meus Favoritos</span>
                         </Button>
 
                         <Button variant="outlined-white" :loading="false" @click="logout">
-                            <LucideLogOut />
+                            <LucideLogOut :size="20" />
                             <span class="ml-2">Sair</span>
                         </Button>
                     </template>
@@ -61,7 +65,11 @@ const isInFavoritesPath = computed(() => {
                             Login
                         </Button>
                     </template>
-                </v-row>
+                </div>
+
+                <v-btn icon variant="text" color="white" class="d-md-none" @click="emit('toggle-drawer')">
+                    <LucideMenu />
+                </v-btn>
             </v-row>
         </v-container>
     </header>

@@ -27,16 +27,53 @@ function handleSearch() {
 
 <template>
     <v-container fluid class="pa-0">
-        <div class="d-flex align-center w-100 position-relative" style="padding-bottom: 100px">
-            <v-img src="~/assets/leilao.png" cover min-height="100" max-height="400"></v-img>
-            <div class="position-absolute d-flex align-center w-100 h-full bottom-0">
-                <SearchBar :availableStates="availableStates" v-model:filters="filters" @search="handleSearch" />
+        <div class="hero-wrapper position-relative">
+            <v-img src="~/assets/leilao.png" cover class="hero-image"
+                :height="$vuetify.display.smAndDown ? '250' : '400'"></v-img>
+            <div class="search-overlay d-flex align-center w-100">
+                <v-container>
+                    <SearchBar :availableStates="availableStates" v-model:filters="filters" @search="handleSearch" />
+                </v-container>
             </div>
         </div>
-        <v-container>
+        <v-container class="pt-8">
             <PropertiesList :properties="properties" @updatePage="emit('updatePage', $event)"
                 @toggleFavorite="emit('toggleFavorite', $event)" title="Imóveis em Destaque"
                 @resetFilters="emit('resetFilters')" />
         </v-container>
     </v-container>
 </template>
+
+<style scoped>
+.hero-wrapper {
+    min-height: 300px;
+    display: flex;
+    flex-direction: column;
+}
+
+@media (min-width: 960px) {
+    .hero-wrapper {
+        min-height: 400px;
+        display: block;
+    }
+
+    .search-overlay {
+        position: absolute;
+        bottom: -60px;
+        left: 0;
+        z-index: 2;
+    }
+}
+
+@media (max-width: 959px) {
+    .hero-wrapper {
+        background-color: rgb(var(--v-theme-primary));
+    }
+
+    .search-overlay {
+        position: relative;
+        margin-top: -40px;
+        z-index: 2;
+    }
+}
+</style>

@@ -39,7 +39,7 @@ defineEmits(['toggleFavorite', 'click']);
 </script>
 
 <template>
-    <v-card rounded="xl" elevation="4" class="overflow-hidden border-0" @click="$emit('click')" width="270"
+    <v-card rounded="xl" elevation="4" class="overflow-hidden border-0 property-card-wrapper" @click="$emit('click')"
         height="440">
         <v-img :src="props.imageLink" height="250" cover class="position-relative d-flex align-end">
             <div v-if="actioneerLogoPath" class="d-flex align-end justify-end w-100" style="z-index: 1">
@@ -56,7 +56,7 @@ defineEmits(['toggleFavorite', 'click']);
             </div>
 
             <div class="bg-tertiary text-white text-center py-2 text-body-2 font-weight-medium position-relative"
-                style="z-index: 2; width: 270px;">
+                style="z-index: 2; width: 100%;">
                 Data do leilão: {{ props.endDate.getHours() == 0 ? formatDate(props.endDate) :
                     formatDateTime(props.endDate) }}
             </div>
@@ -98,7 +98,8 @@ defineEmits(['toggleFavorite', 'click']);
                         <div class="text-h5 font-weight-bold text-tertiary lh-1 mb-1">
                             {{ formatMoney(props.currentPrice) }}
                         </div>
-                        <div v-if="props.oldPrice" class="text-body-2 text-grey-lighten-1 text-decoration-line-through">
+                        <div v-if="props.oldPrice && props.oldPrice > props.currentPrice"
+                            class="text-body-2 text-grey-lighten-1 text-decoration-line-through">
                             {{ formatMoney(props.oldPrice) }}
                         </div>
                     </div>

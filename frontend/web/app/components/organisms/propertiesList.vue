@@ -32,19 +32,23 @@ function toggleFavorite(property: IPropertyList) {
         <v-col class="d-flex flex-column ga-10">
             <h2>{{ title }}</h2>
             <div v-if="properties">
-                <v-row class="ga-4" v-if="properties.content.length > 0">
-                    <PropertyBox v-for="property in properties.content" :key="property.id"
-                        :imageLink="property.imageLink" :title="property.name" :currentPrice="property.currentPrice"
-                        :oldPrice="property.valuedPrice" :endDate="property.auctionDateTime"
-                        :city="property.address.city" :state="property.address.state"
-                        :auctioneerName="property.auctioneerName" :isFavorite="property.isFavorite"
-                        :discount="property.discount" @click="navigateToProperty(property)"
-                        @toggleFavorite="toggleFavorite(property)" />
+                <v-row v-if="properties.content.length > 0">
+                    <v-col v-for="property in properties.content" :key="property.id" cols="12" sm="6" md="4" lg="3"
+                        xl="2">
+                        <PropertyBox :imageLink="property.imageLink" :title="property.name"
+                            :currentPrice="property.currentPrice" :oldPrice="property.valuedPrice"
+                            :endDate="property.auctionDateTime" :city="property.address.city"
+                            :state="property.address.state" :auctioneerName="property.auctioneerName"
+                            :isFavorite="property.isFavorite" :discount="property.discount"
+                            @click="navigateToProperty(property)" @toggleFavorite="toggleFavorite(property)" />
+                    </v-col>
                 </v-row>
                 <EmptyState v-else @resetFilters="emit('resetFilters')" />
             </div>
             <v-row v-else class="ga-4">
-                <PropertySkeleton v-for="i in 4" :key="i" />
+                <v-col v-for="i in 4" :key="i" cols="12" sm="6" md="4" lg="3" xl="2">
+                    <PropertySkeleton />
+                </v-col>
             </v-row>
 
             <v-pagination v-if="properties && properties.content.length > 0" :length="properties.totalPages"

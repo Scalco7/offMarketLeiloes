@@ -15,7 +15,7 @@ const propertyLinks = [
 </script>
 
 <template>
-    <footer class="bg-primary py-12 mt-auto">
+    <footer class="bg-primary px-6 px-sm-16 px-md-0 py-12 mt-auto">
         <v-container>
             <v-row class="d-flex flex-row">
                 <v-col cols="12" md="3">
@@ -27,7 +27,7 @@ const propertyLinks = [
                     </p>
                 </v-col>
 
-                <v-row class="mt-16" cols="12" md="9">
+                <v-row class="mt-4 mt-md-16" cols="12" md="9">
                     <v-col cols="12" md="3">
                         <h3 class="text-tertiary text-h8 font-weight-bold mb-2">Institucional</h3>
                         <div class="d-flex flex-column ga-1">

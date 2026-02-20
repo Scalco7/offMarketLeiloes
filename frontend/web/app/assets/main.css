@@ -70,17 +70,6 @@
   animation-delay: 0.4s;
 }
 
-@keyframes fadeInUp {
-  from {
-    opacity: 0;
-    transform: translateY(30px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
 /* Navigation Helpers */
 .hover-primary {
   transition: all 0.2s ease;
@@ -106,4 +95,28 @@
 .custom-input .v-field--focused {
   border-color: #1867c0 !important;
   box-shadow: 0 0 0 4px rgba(24, 103, 192, 0.1) !important;
+}
+
+@media (max-width: 600px) {
+  .v-container {
+    padding-left: 16px !important;
+    padding-right: 16px !important;
+  }
+}
+
+@media (max-width: 960px) {
+  .hero-section {
+    min-height: 300px;
+  }
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }

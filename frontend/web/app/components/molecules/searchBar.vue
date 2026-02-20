@@ -42,12 +42,13 @@ function handleSearch() {
 
 <template>
     <div class="search-bar-container w-100">
-        <div class="search-tab d-inline-flex align-center bg-primary px-8 py-3 rounded-t-xl">
-            <span class="text-white font-weight-bold text-h6">Buscar imóvel</span>
+        <div class="search-tab d-inline-flex align-center justify-center bg-primary px-8 py-3 rounded-t-xl"
+            :class="{ 'w-100': $vuetify.display.xs }">
+            <span class="text-white font-weight-bold text-h6 text-no-wrap">Buscar imóvel</span>
         </div>
 
         <v-sheet color="primary" class="pa-6 rounded-b-xl rounded-te-xl elevation-4">
-            <v-row class="ga-4 ga-md-0">
+            <v-row class="ga-0">
                 <v-col cols="12" md="8">
                     <TextInput v-model="filters.name" label="Busca" placeholder="Digite o nome do imóvel..." />
                 </v-col>
