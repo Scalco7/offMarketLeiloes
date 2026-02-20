@@ -15,12 +15,15 @@ RUN mvn dependency:go-offline
 COPY src ./src
 RUN mvn clean package -DskipTests
 
+# Instala o Chromium no estágio de build para evitar que a aplicação Spring precise rodar
+ENV PLAYWRIGHT_BROWSERS_PATH=/app/pw-browsers
+RUN mvn exec:java -Dexec.mainClass="com.microsoft.playwright.CLI" -Dexec.args="install chromium"
+
 # Estágio 2: Runtime
 FROM mcr.microsoft.com/openjdk/jdk:25-ubuntu
 WORKDIR /app
 
 # Instala todas as dependências do sistema necessárias para o Playwright (Chromium)
-# Estas são as bibliotecas que o Ubuntu Jammy precisa para rodar navegadores headless
 RUN apt-get update && apt-get install -y --no-install-recommends \
     libgbm1 \
     libnss3 \
@@ -43,20 +46,12 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     libnspr4 \
     && rm -rf /var/lib/apt/lists/*
 
-# Copia o jar gerado no estágio de build
+# Copia o jar gerado e os navegadores instalados
 COPY --from=build /app/target/offMarketLeiloes-0.0.1-SNAPSHOT.jar app.jar
+COPY --from=build /app/pw-browsers /app/pw-browsers
 
 # Define o local onde o Playwright armazena os navegadores
 ENV PLAYWRIGHT_BROWSERS_PATH=/app/pw-browsers
-
-# Instala o Chromium no estágio de runtime (usando o próprio JAR da aplicação)
-# Para resolver o erro de Classpath, usamos o jar diretamente se for possível, 
-# mas a forma mais segura em Spring Boot é deixar o Playwright baixar na primeira execução 
-# ou usar um comando Maven no estágio de build.
-# Vamos garantir que ele baixe para o diretório definido:
-RUN java -jar app.jar --playwright.install=true || true 
-# Nota: Se a sua aplicação não tiver um flag para isso, o Playwright baixará automaticamente 
-# no primeiro 'playwright.create()'. As libs acima já garantem que ele vai rodar.
 
 # Variáveis de ambiente padrão
 ENV SPRING_PROFILES_ACTIVE=prod
