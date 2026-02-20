@@ -1,6 +1,6 @@
 # Estágio 1: Build
-# Usando Eclipse Temurin 25 JDK
-FROM eclipse-temurin:25-jdk-jammy AS build
+# Usando Microsoft OpenJDK 25 no Ubuntu Jammy
+FROM mcr.microsoft.com/openjdk/jdk:25-ubuntu AS build
 
 # Instala Maven
 RUN apt-get update && apt-get install -y maven && rm -rf /var/lib/apt/lists/*
@@ -16,7 +16,7 @@ COPY src ./src
 RUN mvn clean package -DskipTests
 
 # Estágio 2: Runtime
-FROM eclipse-temurin:25-jre-jammy
+FROM mcr.microsoft.com/openjdk/jdk:25-ubuntu
 WORKDIR /app
 
 # Instala todas as dependências do sistema necessárias para o Playwright (Chromium)
