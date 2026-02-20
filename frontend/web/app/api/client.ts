@@ -46,8 +46,6 @@ apiClient.interceptors.response.use(
     const originalRequest = error.config;
     const toast = useToastStore();
 
-    console.log(error);
-
     const isAuthRequest =
       originalRequest.url?.includes("/auth/login") ||
       originalRequest.url?.includes("/auth/refresh-token");

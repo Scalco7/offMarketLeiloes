@@ -8,6 +8,7 @@ interface ITokenPayload extends JwtPayload {
 
 export const useAuth = () => {
   const { $api } = useNuxtApp();
+  const router = useRouter();
   const accessToken = useState<string | null>("accessToken", () => null);
   const refreshToken = useState<string | null>("refreshToken", () => null);
   const accountId = useState<string | null>("accountId", () => null);
@@ -37,9 +38,10 @@ export const useAuth = () => {
         localStorage.setItem("accountId", dataAccountId);
       }
 
+      router.push("/");
       return response;
     } catch (error) {
-      logout();
+      logout(false);
       throw error;
     }
   }
@@ -61,13 +63,14 @@ export const useAuth = () => {
         localStorage.setItem("accountId", dataAccountId);
       }
 
+      router.push("/");
       return response;
     } catch (error) {
       throw error;
     }
   }
 
-  function logout() {
+  function logout(redirect: boolean) {
     accessToken.value = null;
     refreshToken.value = null;
     accountId.value = null;
@@ -78,7 +81,9 @@ export const useAuth = () => {
       localStorage.removeItem("accountId");
     }
 
-    useRouter().push("/");
+    if (redirect) {
+      router.push("/");
+    }
   }
 
   function getAccountId(accessToken: string): string {

@@ -8,7 +8,7 @@ import { LucideShieldAlert, LucideLock, LucideFileText, LucideUserCheck } from '
             <v-container>
                 <v-row align="center">
                     <v-col cols="12" md="8" class="text-center text-md-left">
-                        <h1 class="text-h2 font-weight-bold mb-4 animate-fade-in-up">
+                        <h1 class="text-h3 text-sm-h2 font-weight-bold mb-4 animate-fade-in-up">
                             Política de <span class="text-primary-gradient">Privacidade</span>
                         </h1>
                         <p class="text-h6 mb-6 opacity-80 animate-fade-in-up delay-1">
@@ -45,8 +45,8 @@ import { LucideShieldAlert, LucideLock, LucideFileText, LucideUserCheck } from '
                     </v-card>
                 </v-col>
 
-                <v-col cols="12" md="9">
-                    <v-card variant="flat" class="pa-8 pb-16 policy-card">
+                <v-col cols="12" md="9" class="pa-0 pa-sm-3">
+                    <v-card variant="flat" class="pa-4 pa-sm-8 pb-16 policy-card">
                         <section id="introducao" class="mb-12">
                             <h2 class="text-h4 font-weight-bold mb-4">Introdução</h2>
                             <p class="text-body-1 text-medium-emphasis mb-4">
@@ -134,7 +134,8 @@ import { LucideShieldAlert, LucideLock, LucideFileText, LucideUserCheck } from '
                             </template>
                             Para exercer seus direitos ou tirar dúvidas sobre esta política, entre em contato conosco
                             através do e-mail
-                            <strong>privacidade@offmarketleiloes.com.br</strong>.
+                            <span
+                                class="font-weight-bold text-truncate d-flex w-100">privacidade@offmarketleiloes.com.br.</span>
                         </v-alert>
                     </v-card>
                 </v-col>

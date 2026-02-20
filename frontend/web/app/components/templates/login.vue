@@ -8,13 +8,11 @@ const showPassword = ref(false)
 const loading = ref(false)
 
 const { login } = useAuth()
-const router = useRouter()
 
 async function handleLogin() {
     loading.value = true
     try {
         await login({ email: email.value, password: password.value })
-        router.push('/')
     } finally {
         loading.value = false
     }

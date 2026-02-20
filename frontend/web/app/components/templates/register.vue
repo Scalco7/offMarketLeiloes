@@ -15,7 +15,6 @@ async function handleRegister() {
     loading.value = true
     try {
         await register({ name: name.value, email: email.value, password: password.value })
-        router.push('/')
     } catch (error) {
         console.error('Registration error:', error)
     } finally {

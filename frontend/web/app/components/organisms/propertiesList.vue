@@ -6,11 +6,12 @@ import type { IListPropertiesResponse, IPropertyList } from "~/api/modules/prope
 
 interface IPropertiesListProps {
     title: string
+    emptyStateButtonText: string
     properties?: IListPropertiesResponse
 }
 
 const props = defineProps<IPropertiesListProps>()
-const emit = defineEmits(['updatePage', 'resetFilters', 'toggleFavorite'])
+const emit = defineEmits(['updatePage', 'onClickEmptyAction', 'toggleFavorite'])
 
 const page = ref(props.properties?.number || 1)
 
@@ -43,7 +44,8 @@ function toggleFavorite(property: IPropertyList) {
                             @click="navigateToProperty(property)" @toggleFavorite="toggleFavorite(property)" />
                     </v-col>
                 </v-row>
-                <EmptyState v-else @resetFilters="emit('resetFilters')" />
+                <EmptyState v-else @onClickEmptyAction="emit('onClickEmptyAction')"
+                    :buttonText="props.emptyStateButtonText" />
             </div>
             <v-row v-else class="ga-4">
                 <v-col v-for="i in 4" :key="i" cols="12" sm="6" md="4" lg="3" xl="2">

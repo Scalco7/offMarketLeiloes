@@ -52,7 +52,7 @@ const isInFavoritesPath = computed(() => {
                             <span class="ml-2">Meus Favoritos</span>
                         </Button>
 
-                        <Button variant="outlined-white" :loading="false" @click="logout">
+                        <Button variant="outlined-white" :loading="false" @click="() => logout(true)">
                             <LucideLogOut :size="20" />
                             <span class="ml-2">Sair</span>
                         </Button>

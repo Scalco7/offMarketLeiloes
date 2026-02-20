@@ -1,29 +1,5 @@
 <script setup lang="ts">
 import { LucideMail, LucidePhone, LucideMapPin, LucideClock } from 'lucide-vue-next'
-
-const form = ref({
-    name: '',
-    email: '',
-    subject: '',
-    message: ''
-})
-
-const loading = ref(false)
-
-function handleSubmit() {
-    loading.value = true
-    // Simulate API call
-    setTimeout(() => {
-        loading.value = false
-        alert('Mensagem enviada com sucesso!')
-        form.value = {
-            name: '',
-            email: '',
-            subject: '',
-            message: ''
-        }
-    }, 1500)
-}
 </script>
 
 <template>
@@ -101,7 +77,7 @@ function handleSubmit() {
                         </div>
                     </div>
                 </v-col>
-                <div class="map-section">
+                <v-row cols="11" md="5" class="map-section">
                     <div class="d-flex align-center justify-center">
                         <v-card variant="outlined" class="pa-10 text-center rounded-xl bg-white elevation-5 mx-4"
                             max-width="500">
@@ -115,7 +91,7 @@ function handleSubmit() {
                             </p>
                         </v-card>
                     </div>
-                </div>
+                </v-row>
             </v-row>
         </v-container>
     </div>
@@ -129,7 +105,6 @@ function handleSubmit() {
 }
 
 .map-section {
-    width: 50%;
     height: 400px;
     display: flex;
     align-items: center;

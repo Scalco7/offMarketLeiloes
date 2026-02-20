@@ -41,7 +41,7 @@ const isInFavoritesPath = computed(() => {
 
                 <v-divider v-if="isLoggedIn" class="my-2"></v-divider>
 
-                <v-list-item v-if="isLoggedIn" title="Sair" @click="logout" base-color="error">
+                <v-list-item v-if="isLoggedIn" title="Sair" @click="() => logout(true)" base-color="error">
                     <template v-slot:prepend>
                         <LucideLogOut :size="20" />
                     </template>

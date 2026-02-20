@@ -1,7 +1,12 @@
 <script setup lang="ts">
 import Button from '../atoms/button.vue';
 
-defineEmits(['resetFilters'])
+interface IEmptyStateProps {
+    buttonText: string
+}
+
+const props = defineProps<IEmptyStateProps>()
+defineEmits(['onClickEmptyAction'])
 </script>
 
 <template>
@@ -19,8 +24,8 @@ defineEmits(['resetFilters'])
             </p>
         </div>
 
-        <Button @click="$emit('resetFilters')" :loading="false" variant="primary">
-            Limpar filtros
+        <Button @click="$emit('onClickEmptyAction')" :loading="false" variant="primary">
+            {{ buttonText }}
         </Button>
     </v-col>
 </template>

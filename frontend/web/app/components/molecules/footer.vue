@@ -18,16 +18,18 @@ const propertyLinks = [
     <footer class="bg-primary px-6 px-sm-16 px-md-0 py-12 mt-auto">
         <v-container>
             <v-row class="d-flex flex-row">
-                <v-col cols="12" md="3">
+                <v-col cols="12" md="3" class="d-flex flex-column align-center align-md-start">
                     <v-img src="~/assets/logo.png" alt="Off Market Leilões" width="220" class="mb-6" />
-                    <p class="text-white text-body-2 opacity-90" style="line-height: 1.6; max-width: 200px;">
-                        Referência em leilões judiciais e extrajudiciais. Segurança, transparência e as melhores
-                        oportunidades de
-                        investimento em um só lugar.
-                    </p>
+                    <div class="w-100 d-flex justify-start">
+                        <p class="text-white text-body-2 opacity-90" style="line-height: 1.6; max-width: 200px;">
+                            Referência em leilões judiciais e extrajudiciais. Segurança, transparência e as melhores
+                            oportunidades de
+                            investimento em um só lugar.
+                        </p>
+                    </div>
                 </v-col>
 
-                <v-row class="mt-4 mt-md-16" cols="12" md="9">
+                <v-col class="mt-4 mt-md-16 pa-0 d-md-flex" cols="12" md="9">
                     <v-col cols="12" md="3">
                         <h3 class="text-tertiary text-h8 font-weight-bold mb-2">Institucional</h3>
                         <div class="d-flex flex-column ga-1">
@@ -55,7 +57,7 @@ const propertyLinks = [
                             Fique por dentro das nossas novidades e promoções
                         </p>
                     </v-col>
-                </v-row>
+                </v-col>
             </v-row>
         </v-container>
     </footer>

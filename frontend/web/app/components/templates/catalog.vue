@@ -39,7 +39,7 @@ function handleSearch() {
         <v-container class="pt-8">
             <PropertiesList :properties="properties" @updatePage="emit('updatePage', $event)"
                 @toggleFavorite="emit('toggleFavorite', $event)" title="Imóveis em Destaque"
-                @resetFilters="emit('resetFilters')" />
+                @onClickEmptyAction="emit('resetFilters')" emptyStateButtonText="Limpar Filtros" />
         </v-container>
     </v-container>
 </template>
