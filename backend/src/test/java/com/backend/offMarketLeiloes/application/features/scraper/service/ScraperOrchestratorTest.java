@@ -13,8 +13,10 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.context.ApplicationEventPublisher;
 
 import com.backend.offMarketLeiloes.application.features.properties.commands.createBatch.CreatePropertiesBatchCommand;
+import com.backend.offMarketLeiloes.application.features.scraper.events.ScrapingCompletedEvent;
 import com.backend.offMarketLeiloes.domain.entities.ScraperJob;
 import com.backend.offMarketLeiloes.domain.enums.EScraperJobStatus;
 import com.backend.offMarketLeiloes.domain.enums.EScraperSites;
@@ -33,12 +35,15 @@ class ScraperOrchestratorTest {
     @Mock
     private CreatePropertiesBatchCommand createPropertiesBatchCommand;
 
+    @Mock
+    private ApplicationEventPublisher eventPublisher;
+
     private ScraperOrchestrator scraperOrchestrator;
 
     @BeforeEach
     void setUp() {
         scraperOrchestrator = new ScraperOrchestrator(List.of(scraper), scraperJobRepository,
-                createPropertiesBatchCommand);
+                createPropertiesBatchCommand, eventPublisher);
     }
 
     @Test
@@ -57,6 +62,7 @@ class ScraperOrchestratorTest {
         verify(scraper).scrape();
         verify(createPropertiesBatchCommand).execute(any());
         verify(scraperJobRepository).save(any(ScraperJob.class));
+        verify(eventPublisher).publishEvent(any(ScrapingCompletedEvent.class));
         assert job.getStatus() == EScraperJobStatus.COMPLETED;
     }
 
