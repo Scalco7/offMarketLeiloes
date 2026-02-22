@@ -1,128 +1,97 @@
-# Nuxt Minimal Starter
+# Off Market Leilões - Frontend (Web) 🌐
 
-Look at the [Nuxt documentation](https://nuxt.com/docs/getting-started/introduction) to learn more.
+![Vue.js](https://img.shields.io/badge/Vue.js-3.x-4FC08D?style=for-the-badge&logo=vuedotjs&logoColor=white)
+![Nuxt.js](https://img.shields.io/badge/Nuxt.js-4.x-00DC82?style=for-the-badge&logo=nuxtdotjs&logoColor=white)
+![Vuetify](https://img.shields.io/badge/Vuetify-3.x-1867C0?style=for-the-badge&logo=vuetify&logoColor=white)
+![TypeScript](https://img.shields.io/badge/TypeScript-5.x-3178C6?style=for-the-badge&logo=typescript&logoColor=white)
+![Atomic Design](https://img.shields.io/badge/Design-Atomic-red?style=for-the-badge)
 
-## Setup
+Este é o módulo de **Frontend** do sistema Off Market Leilões. Uma aplicação web construída com **Nuxt 4**.
 
-Make sure to install dependencies:
+<br>
 
-```bash
-# npm
-npm install
+## 🎨 Metodologia: Atomic Design
 
-# pnpm
-pnpm install
+A organização dos componentes segue a metodologia **Atomic Design**, permitindo a criação de uma interface modular, escalável e de fácil manutenção.
 
-# yarn
-yarn install
+- **Atoms**: Componentes básicos e indivisíveis (Ex: Botões, Inputs, Ícones).
+- **Molecules**: Grupos de átomos que funcionam juntos (Ex: Campo de busca com botão, Item de lista).
+- **Organisms**: Componentes complexos formados por moléculas e átomos (Ex: Navbar, Card de Imóvel, Grid de Filtros).
+- **Templates**: Estruturas de página que organizam os organismos (Ex: Layout da Dashboard, Esqueleto do Catálogo).
+- **Pages**: Instâncias reais dos templates com dados injetados.
 
-# bun
-bun install
+```text
+app/components/
+├── atoms/        # Menores unidades
+├── molecules/    # Uniões simples
+├── organisms/    # Seções complexas
+└── templates/    # Estruturas de layout
 ```
 
-## Development Server
+<br>
 
-Start the development server on `http://localhost:3000`:
+## 🏗️ Arquitetura de API: CQRS Pattern
 
-```bash
-# npm
-npm run dev
+Assim como no backend, aplicamos o padrão **CQRS** na camada de integração para manter o frontend organizado e previsível.
 
-# pnpm
-pnpm dev
-
-# yarn
-yarn dev
-
-# bun
-bun run dev
-```
-
-## Production
-
-Build the application for production:
-
-```bash
-# npm
-npm run build
-
-# pnpm
-pnpm build
-
-# yarn
-yarn build
-
-# bun
-bun run build
-```
-
-Locally preview production build:
-
-```bash
-# npm
-npm run preview
-
-# pnpm
-pnpm preview
-
-# yarn
-yarn preview
-
-# bun
-bun run preview
-```
-
-Check out the [deployment documentation](https://nuxt.com/docs/getting-started/deployment) for more information.
-
-# Arquitetura de API CQRS (Nuxt 4)
-
-Esta arquitetura segue o padrão **CQRS (Command Query Responsibility Segregation)**, separando claramente as operações que alteram estado (**Commands**) das que buscam dados (**Queries**).
-
-## Estrutura de Pastas
+- **Commands**: Operações que alteram estado (`POST`, `PUT`, `DELETE`).
+- **Queries**: Operações de busca de dados (`GET`).
 
 ```text
 app/api/
 ├── client.ts             # Instância Axios com Interceptors (Auth + Refresh)
-├── index.ts              # Registro central (Agrupa auth, property, etc.)
-└── modules/
-    └── [modulo]/         # Ex: auth, property
-        ├── index.ts      # Exporta Commands e Queries do módulo
-        ├── [modulo].interface.ts # Interfaces compartilhadas do módulo
-        ├── commands/     # Operações de alteração (POST, PUT, DELETE)
-        │   └── login.command.ts
-        └── queries/      # Operações de leitura (GET)
-            └── list-properties.query.ts
+└── modules/              # Módulos separados por domínio
+    └── [modulo]/
+        ├── commands/     # Ex: login, addFavorite
+        └── queries/      # Ex: listProperties, getStatus
 ```
 
-## Como Usar
+<br>
 
-Cada Command ou Query é uma função independente com suas próprias interfaces de Request e Response.
+## 📋 Pré-requisitos
 
-### Injeção Global (v-app)
+Para rodar este módulo de forma isolada:
 
-```vue
-<script setup lang="ts">
-const { $api } = useNuxtApp();
+- **Node.js 20+** (Recomenda-se a versão LTS mais recente).
+- **NPM** ou **Yarn**.
+- **Backend rodando** (ou acesso a um ambiente de API).
 
-// Exemplo de uma Query
-const loadProperties = async () => {
-  const { data } = await $api.property.queries.list({ page: 1 });
-};
+<br>
 
-// Exemplo de um Command
-const handleLogin = async (creds) => {
-  const { data } = await $api.auth.commands.login(creds);
-};
-</script>
-```
+## ⚙️ Configuração (Variáveis de Ambiente)
 
-## Benefícios
+Crie um arquivo `.env` na pasta `frontend/web/` baseando-se no `.env.example`:
 
-1.  **Escalabilidade**: Cada operação é isolada. Mudar um Command não afeta nada além dele.
-2.  **Tipagem Forte**: Cada arquivo define exatamente o que entra e o que sai daquela operação.
-3.  **Manutenibilidade**: Segue o padrão do Backend, facilitando a comunicação entre times.
+| Variável            | Descrição                   | Exemplo                     |
+| :------------------ | :-------------------------- | :-------------------------- |
+| `VITE_API_BASE_URL` | URL base da API Spring Boot | `http://localhost:8080/api` |
 
-## Padronização de Nomes
+<br>
 
-- **Commands**: Verbo no infinitivo + Nome + `.command.ts` (ex: `login.command.ts`).
-- **Queries**: Verbo no infinitivo (get, list) + Nome + `.query.ts` (ex: `list-properties.query.ts`).
+## 🚀 Como Executar (Modo Isolado)
+
+1. **Instale as dependências:**
+
+   ```bash
+   npm install
+   ```
+
+2. **Inicie o servidor de desenvolvimento:**
+   ```bash
+   npm run dev
+   ```
+
+A aplicação estará disponível em `http://localhost:3000`.
+
+<br>
+
+## 🛠️ Scripts Disponíveis
+
+- `npm run dev`: Inicia o Nuxt em modo desenvolvimento.
+- `npm run build`: Compila a aplicação para produção.
+- `npm run generate`: Gera o site estático (SSG).
+- `npm run preview`: Previsualiza o build de produção localmente.
+
+<br>
+
+---
