@@ -65,12 +65,19 @@ public class PropertyList {
     @Setter
     @AllArgsConstructor
     @NoArgsConstructor
+    @Schema(description = "Informações resumidas de endereço")
     public static class PropertyAddressList {
+        @Schema(description = "CEP", example = "01001-000")
         private String zipCode;
+        @Schema(description = "Cidade", example = "São Paulo")
         private String city;
+        @Schema(description = "Estado (UF)", example = "SP")
         private String state;
+        @Schema(description = "Rua", example = "Avenida Paulista")
         private String street;
+        @Schema(description = "Número", example = "1000")
         private String number;
+        @Schema(description = "Bairro", example = "Bela Vista")
         private String neighborhood;
     }
 }

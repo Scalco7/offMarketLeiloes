@@ -18,6 +18,7 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@Schema(description = "Resposta detalhada com o status de um job de scraper")
 public class GetScraperJobStatusResponse {
     @Schema(description = "ID do job", example = "550e8400-e29b-41d4-a716-446655440000")
     private UUID id;

@@ -1,10 +1,11 @@
 package com.backend.offMarketLeiloes.web.controllers;
 
-import org.springframework.http.HttpStatus;
+import com.backend.offMarketLeiloes.web.advice.StandardError;
+import com.backend.offMarketLeiloes.web.advice.ValidationError;
+
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.backend.offMarketLeiloes.application.features.account.commands.createAccount.CreateAccountCommand;
@@ -30,13 +31,12 @@ public class AccountController {
 
     @Operation(summary = "Cadastra uma nova conta", description = "Cria uma nova conta de acesso no sistema.")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "201", description = "Conta cadastrada com sucesso", content = @Content(schema = @Schema(implementation = AuthenticationResponse.class))),
-            @ApiResponse(responseCode = "400", description = "Dados inválidos ou email já cadastrado"),
-            @ApiResponse(responseCode = "401", description = "Não autorizado ou token inválido"),
-            @ApiResponse(responseCode = "500", description = "Erro interno no servidor")
+            @ApiResponse(responseCode = "200", description = "Conta cadastrada com sucesso", content = @Content(schema = @Schema(implementation = AuthenticationResponse.class))),
+            @ApiResponse(responseCode = "422", description = "Dados inválidos ou email já cadastrado", content = @Content(schema = @Schema(implementation = ValidationError.class))),
+            @ApiResponse(responseCode = "401", description = "Não autorizado ou token inválido", content = @Content(schema = @Schema(implementation = StandardError.class))),
+            @ApiResponse(responseCode = "500", description = "Erro interno no servidor", content = @Content(schema = @Schema(implementation = StandardError.class)))
     })
     @PostMapping("/register")
-    @ResponseStatus(HttpStatus.CREATED)
     public AuthenticationResponse create(@RequestBody @Valid CreateAccountRequest request) {
         return createAccountCommand.execute(request);
     }

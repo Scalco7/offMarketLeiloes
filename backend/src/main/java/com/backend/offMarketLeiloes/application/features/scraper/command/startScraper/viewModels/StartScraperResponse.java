@@ -12,6 +12,7 @@ import java.util.UUID;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@Schema(description = "Resposta do início de um job de scraper")
 public class StartScraperResponse {
     @Schema(description = "ID do job criado", example = "550e8400-e29b-41d4-a716-446655440000")
     private UUID jobId;

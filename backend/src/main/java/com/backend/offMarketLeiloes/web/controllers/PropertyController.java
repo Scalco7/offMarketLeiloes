@@ -1,5 +1,8 @@
 package com.backend.offMarketLeiloes.web.controllers;
 
+import com.backend.offMarketLeiloes.web.advice.StandardError;
+import com.backend.offMarketLeiloes.web.advice.ValidationError;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -15,10 +18,8 @@ import com.backend.offMarketLeiloes.application.features.properties.queries.list
 import com.backend.offMarketLeiloes.application.features.properties.commands.createBatch.CreatePropertiesBatchCommand;
 import com.backend.offMarketLeiloes.application.features.properties.commands.createBatch.viewModels.CreatePropertyRequest;
 import java.util.List;
-import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.ResponseStatus;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -46,8 +47,8 @@ public class PropertyController {
 
     @Operation(summary = "Retorna os estados disponíveis e a quantidade de imóveis", description = "Retorna uma lista de estados que possuem imóveis ativos e a contagem de imóveis em cada um.")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Lista retornada com sucesso"),
-            @ApiResponse(responseCode = "500", description = "Erro interno no servidor")
+            @ApiResponse(responseCode = "200", description = "Lista retornada com sucesso", content = @Content(schema = @Schema(implementation = AvailableState.class))),
+            @ApiResponse(responseCode = "500", description = "Erro interno no servidor", content = @Content(schema = @Schema(implementation = StandardError.class)))
     })
     @GetMapping("/states")
     public List<AvailableState> listAvailableStates() {
@@ -57,8 +58,8 @@ public class PropertyController {
     @Operation(summary = "Consulta de imóveis com filtros", description = "Retorna uma página de imóveis baseada nos filtros fornecidos. Esta rota é pública.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Pesquisa realizada com sucesso", content = @Content(schema = @Schema(implementation = PaginatedResponse.class))),
-            @ApiResponse(responseCode = "400", description = "Parâmetros de busca ou paginação inválidos"),
-            @ApiResponse(responseCode = "500", description = "Erro interno no servidor")
+            @ApiResponse(responseCode = "422", description = "Parâmetros de busca ou paginação inválidos", content = @Content(schema = @Schema(implementation = ValidationError.class))),
+            @ApiResponse(responseCode = "500", description = "Erro interno no servidor", content = @Content(schema = @Schema(implementation = StandardError.class)))
     })
     @GetMapping
     public PaginatedResponse<PropertyList> listProperties(
@@ -68,12 +69,11 @@ public class PropertyController {
 
     @Operation(summary = "Criação de imóveis em lote", description = "Recebe uma lista de imóveis e os cria no banco de dados.")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "201", description = "Imóveis criados com sucesso"),
-            @ApiResponse(responseCode = "400", description = "Dados inválidos fornecidos"),
-            @ApiResponse(responseCode = "500", description = "Erro interno no servidor")
+            @ApiResponse(responseCode = "200", description = "Imóveis criados com sucesso"),
+            @ApiResponse(responseCode = "422", description = "Dados inválidos fornecidos", content = @Content(schema = @Schema(implementation = ValidationError.class))),
+            @ApiResponse(responseCode = "500", description = "Erro interno no servidor", content = @Content(schema = @Schema(implementation = StandardError.class)))
     })
     @PostMapping("/batch")
-    @ResponseStatus(HttpStatus.CREATED)
     public void createPropertiesBatch(@RequestBody @Valid List<CreatePropertyRequest> requests) {
         try {
             createPropertiesBatchCommand.execute(requests);
