@@ -95,7 +95,7 @@ defineEmits(['toggleFavorite', 'click']);
 
                 <div class="d-flex align-end justify-space-between mt-auto">
                     <div class="d-flex flex-column">
-                        <div class="text-h5 font-weight-bold text-tertiary lh-1 mb-1">
+                        <div class="text-h6 font-weight-bold text-tertiary lh-1 mb-1">
                             {{ formatMoney(props.currentPrice) }}
                         </div>
                         <div v-if="props.oldPrice && props.oldPrice > props.currentPrice"
