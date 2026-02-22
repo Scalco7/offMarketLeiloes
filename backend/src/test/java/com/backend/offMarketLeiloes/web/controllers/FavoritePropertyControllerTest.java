@@ -90,7 +90,7 @@ class FavoritePropertyControllerTest {
         mockMvc.perform(post("/favorites")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(request)))
-                .andExpect(status().isCreated());
+                .andExpect(status().isOk());
     }
 
     @Test
@@ -117,8 +117,8 @@ class FavoritePropertyControllerTest {
         favoritePropertyRepository.saveAndFlush(favorite);
 
         mockMvc.perform(get("/favorites")
-                .param("name", "Test")
-                .param("page", "0")
+                .param("name", "Test Property")
+                .param("page", "1")
                 .param("pageSize", "10")
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())

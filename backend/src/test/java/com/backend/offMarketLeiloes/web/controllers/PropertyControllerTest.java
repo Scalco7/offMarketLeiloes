@@ -64,16 +64,18 @@ class PropertyControllerTest {
         void shouldFailWhenPageIsNegative() throws Exception {
                 mockMvc.perform(get("/properties")
                                 .param("page", "-1"))
-                                .andExpect(status().isBadRequest())
-                                .andExpect(jsonPath("$.page").value("A página deve ser maior ou igual a 0"));
+                                .andExpect(status().isUnprocessableEntity())
+                                .andExpect(jsonPath("$.errors[0].message")
+                                                .value("A página deve ser maior ou igual a 1"));
         }
 
         @Test
         void shouldFailWhenPriceIsNegative() throws Exception {
                 mockMvc.perform(get("/properties")
                                 .param("minPrice", "-100"))
-                                .andExpect(status().isBadRequest())
-                                .andExpect(jsonPath("$.minPrice").value("O preço mínimo não pode ser negativo"));
+                                .andExpect(status().isUnprocessableEntity())
+                                .andExpect(jsonPath("$.errors[0].message")
+                                                .value("O preço mínimo não pode ser negativo"));
         }
 
         @Test
