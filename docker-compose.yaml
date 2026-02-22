@@ -30,13 +30,17 @@ services:
     depends_on:
       db:
         condition: service_healthy
+    env_file:
+      - ./backend/.env
     environment:
-      - SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/offmarket
-      - SPRING_DATASOURCE_USERNAME=postgres
-      - SPRING_DATASOURCE_PASSWORD=local_password
+      - DATASOURCE_URL=${DATASOURCE_URL:-jdbc:postgresql://db:5432/offmarket}
+      - DATASOURCE_USERNAME=${DATASOURCE_USERNAME:-postgres}
+      - DATASOURCE_PASSWORD=${DATASOURCE_PASSWORD:-local_password}
       - SPRING_JPA_HIBERNATE_DDL_AUTO=update
       - SPRING_PROFILES_ACTIVE=prod
-      - JWT_SECRET=local-development-secret-key-12345
+      - JWT_SECRET=${JWT_SECRET:-local-development-secret-key-12345}
+      - MAIL_USERNAME=${MAIL_USERNAME}
+      - MAIL_PASSWORD=${MAIL_PASSWORD}
     ports:
       - "8080:8080"
     networks:
@@ -51,8 +55,10 @@ services:
     restart: always
     depends_on:
       - backend
+    env_file:
+      - ./frontend/web/.env
     environment:
-      - VITE_API_BASE_URL=http://localhost:8080/api
+      - VITE_API_BASE_URL=${VITE_API_BASE_URL:-http://localhost:8080/api}
       - NODE_ENV=production
     ports:
       - "3000:3000"
